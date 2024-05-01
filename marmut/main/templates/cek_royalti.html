@@ -1,0 +1,78 @@
+{% block content %}
+<head>
+    <title>Cek Royalti</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #e9ddc7;
+        }
+        .table {
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid black;
+            box-shadow: 0 2px 4px rgba(0,0,0,1);
+            margin-top: 15px;
+        }
+        th {
+            background-color: #816454;
+            color: white;
+            border: 1px solid black;
+        }
+        td {
+            border: 1px solid black;
+        }
+        #kembali {
+            border-radius: 10px;
+            background-color: #816454;
+            color: white;
+            text-align: center;
+            padding: 8px;
+            padding-left: 12px;
+            padding-right: 12px;
+        }
+        #kembali:hover {
+            background-color: #644d41;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">List Royalti</h1>
+        <button id="kembali">
+            <i class="bi bi-arrow-left"></i>
+        </button>
+        {% if royalties %}
+        <table class="table table-striped table-hover text-center">
+            <thead>
+                <tr>
+                    <th scope="col" class="judul">Judul Lagu</th>
+                    <th scope="col">Judul Album</th>
+                    <th scope="col">Total Play</th>
+                    <th scope="col">Total Download</th>
+                    <th scope="col">Total Royalti Didapat</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for royalti in royalties %}
+                <tr>
+                    <td style="font-weight: bold;">{{ royalti.judul }}</td>
+                    <td>{{ royalti.judul_album }}</td>
+                    <td>{{ royalti.total_play }}</td>
+                    <td>{{ royalti.total_download }}</td>
+                    <td>Rp{{ royalti.jumlah }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="text-center" id="no-album">Belum ada Royalti.</p>
+        {% endif %}
+    </div>
+</body>
+<script>
+    document.getElementById('kembali').addEventListener('click', function() {
+        window.location.href = '/';
+    });
+</script>
+{% endblock content %}

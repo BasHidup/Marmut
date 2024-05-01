@@ -1,0 +1,103 @@
+{% block content %}
+<head>
+    <title>Edit Song</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #e9ddc7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .form-container {
+            width: 50%;
+            border-radius: 5px;
+            background-color: #e9ddc7;
+            box-shadow: 0 2px 4px rgba(0,0,0,1);
+        }
+        .form-container h1 {
+            text-align: center;
+            color: white;
+            background-color: #816454;
+            padding: 5px;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .form-container .input-container {
+            margin: 20px;
+            overflow-y: auto;
+            max-height: 60vh;
+        }
+        .form-container label {
+            font-weight: bold;
+        }
+        .form-container select {
+            width: 100%;
+            padding-top: 8px;
+            padding-bottom: 8px;
+            border: 0px;
+            border-radius: 5px;
+            padding-left: 3px;
+            padding-right: 3px;
+        }
+        .form-container .input-container .text-center button {
+            display: inline-block;
+            width: 47%;
+            margin: 0 7px; 
+            background-color: #816454;
+            color: white;
+            border-radius: 10px;
+            padding: 5px;
+            border: 0px;
+            margin-top: 3px;
+        }
+        #edit-song:hover, #kembali:hover {
+            background-color: #644d41;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>Edit Lagu {{song.judul}}</h1>
+        <div class="input-container">
+            <form method="POST">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="album-name" class="form-label">Album:</label>
+                    <input class="form-control" id="album-name" type="text" value="{{ album_name }}" aria-label="Disabled input example" disabled readonly>
+                </div>
+                <div class="mb-3">
+                    <label for="song-name" class="form-label">Judul lagu:</label>
+                    <input class="form-control" id="song-name" type="text" placeholder="Song Name" aria-label="default input example" value="{{ song.judul }}">
+                </div>
+                <div class="mb-3">
+                    <label for="select-artist" class="form-label">Artist:</label>
+                    <select class="form-select" id="select-artist" aria-label="Default select example">
+                        <option selected>{{song.artist}}</option>
+                        {% for artist in artists %}
+                        <option value="{{ artist.name }}">{{ artist.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="duration" class="form-label">Durasi:</label>
+                    <input class="form-control" id="duration" type="text" placeholder="Durasi lagu (dalam menit)" aria-label="default input example" value="{{ song.durasi }}">
+                </div>
+            </form>
+            <div class="mt-3 text-center">
+                <button id="kembali">Cancel</button>
+                <button id="edit-song">Submit</button>
+            </div>
+        </div>
+    </div>    
+</body>
+<script>
+    document.getElementById('kembali').addEventListener('click', function() {
+        url = "/albums/{{ song.id_album }}/songs/"
+        window.location.href = url;
+    });
+</script>
+{% endblock content %}

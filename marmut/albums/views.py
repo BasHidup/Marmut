@@ -1,7 +1,4 @@
-from django.shortcuts import get_object_or_404, redirect, render
-from django.contrib import messages
-
-from albums.models import DownloadedSong
+from django.shortcuts import render
 
 def show_albums(request):
     # label_acc = {'label':'HYBE'}
@@ -212,16 +209,3 @@ def edit_song(request, id_song):
     }
 
     return render(request, 'edit_song.html', context)
-
-
-def downloaded_songs(request):
-    songs = DownloadedSong.objects.filter(user=request.user)  
-    return render(request, 'downloaded_songs.html', {'songs': songs})
-
-def delete_downloaded_song(request, song_id):
-    song = get_object_or_404(DownloadedSong, id=song_id, user=request.user)
-    if request.method == 'POST':
-        song_title = song.title  # Menyimpan judul untuk message
-        song.delete()
-        messages.success(request, f'Berhasil menghapus Lagu dengan judul "{song_title}" dari daftar unduhan!')
-        return redirect('downloaded_songs')

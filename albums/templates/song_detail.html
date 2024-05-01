@@ -80,9 +80,46 @@
         window.location.href = url;
     });
 
-    document.getElementById('edit-lagu').addEventListener('click', function() {
-        url = "/songs/{{ song.id_konten }}/edit/"
-        window.location.href = url;
+    document.addEventListener('DOMContentLoaded', function() {
+        var editButton = document.getElementById('edit-lagu');
+
+        // Check if label_acc has a value
+        console.log("Nilai label_acc.label: ", "{{ label_acc }}");
+        if ("{{ label_acc }}" !== "None") {
+            editButton.disabled = true;
+            editButton.style.cursor = "not-allowed";
+            editButton.style.backgroundColor = '#b5b4b3';
+        }
+
+        // Add event listener for hover effect
+        editButton.addEventListener('mouseover', function() {
+            if (editButton.disabled) {
+                editButton.style.backgroundColor = '#b5b4b3';
+                editButton.style.cursor = 'not-allowed';
+            } else {
+                editButton.style.backgroundColor = '#644d41';
+                editButton.style.cursor = 'pointer';
+            }
+        });
+
+        // Reset button styles on mouseout
+        editButton.addEventListener('mouseout', function() {
+            if (editButton.disabled) {
+                editButton.style.backgroundColor = '#b5b4b3';
+                editButton.style.cursor = 'not-allowed';
+            } else {
+                editButton.style.backgroundColor = '';
+                editButton.style.cursor = '';
+            }
+        });
+
+        // Add click event listener if button is not disabled
+        editButton.addEventListener('click', function() {
+            if (!editButton.disabled) {
+                var url = "/albums/edit-song/{{ song.id_konten }}/";
+                window.location.href = url;
+            }
+        });
     });
 </script>
 {% endblock content %}

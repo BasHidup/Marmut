@@ -1,0 +1,15 @@
+{% block content %}
+<head>
+    <title>Create New Album</title>
+</head>
+<body>
+    <h1>Ini cuma buat ngecek bisa ke dashboard atau ngga</h1>
+    <h3>silakan diganti jika ingin</h3>
+    <button id="royalti">Cek Royalti</button>
+</body>
+<script>
+    document.getElementById('royalti').addEventListener('click', function() {
+        window.location.href = '/cek-royalti/';
+    });
+</script>
+{% endblock content %}

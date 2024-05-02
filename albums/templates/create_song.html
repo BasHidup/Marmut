@@ -78,7 +78,11 @@
                     <select class="form-select" id="select-artist" aria-label="Default select example">
                         <option selected disabled hidden>Select artist</option>
                         {% for artist in artists %}
-                        <option value="{{ artist.name }}">{{ artist.name }}</option>
+                            {% if logged_in.jenis_akun == 'artist' and logged_in.name == artist.name %}
+                                <option value="{{ artist.name }}" selected>{{ artist.name }}</option>
+                            {% elif logged_in.jenis_akun != 'artist' %}
+                                <option value="{{ artist.name }}">{{ artist.name }}</option>
+                            {% endif %}
                         {% endfor %}
                     </select>
                 </div>
@@ -86,7 +90,15 @@
                     <label for="select-sw" class="form-label">Songwriter(s):</label>
                     <select multiple class="form-select" id="select-sw" aria-label="Multiple select example">
                         {% for songwriter in songwriters %}
-                        <option value="{{ songwriter.id }}">{{ songwriter.name }}</option>
+                            {% if logged_in.jenis_akun == 'songwriter' %}
+                                {% if logged_in.name == songwriter.name %}
+                                <option value="{{ songwriter.name }}" selected hidden>{{ songwriter.name }}</option>
+                                {% else %}
+                                <option value="{{ songwriter.name }}">{{ songwriter.name }}</option>
+                                {% endif %}
+                            {% else %}
+                            <option value="{{ songwriter.name }}">{{ songwriter.name }}</option>
+                            {% endif %}
                         {% endfor %}
                     </select>
                 </div>

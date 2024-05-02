@@ -77,6 +77,7 @@ def show_songs(request, id_album):
     return render(request, "list_songs.html", context)
 
 def create_song(request, id_album):
+    logged_in = {'jenis_akun':'artist', 'name':'Jessica Brown'}
     id_album_ini = id_album
     albums = [
         {'id':'d76fd6f2-c7b6-4a34-bdc1-f873c106808f', 'judul':'Dark Blood', 'jumlah_lagu':11, 'label':'HYBE', 'total_durasi':37},
@@ -113,6 +114,7 @@ def create_song(request, id_album):
     album_name = next((album['judul'] for album in albums if album['id'] == id_album_ini), None)
     print(album_name)
     context = {
+        'logged_in':logged_in,
         'id_album':id_album,
         'album_name':album_name,
         'artists':artists,

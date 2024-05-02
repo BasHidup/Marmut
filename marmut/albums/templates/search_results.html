@@ -49,36 +49,46 @@
             <input type="text" name="q" placeholder="Search for songs, podcasts, or playlists" class="form-control">
             <button type="submit" class="btn btn-primary mt-2">Search</button>
         </form>
-
+    
         {% if query %}
         <h2>Search Results for "{{ query }}"</h2>
         {% if songs or podcasts or playlists %}
-            <h4>Songs</h4>
-            <ul>
-            {% for song in songs %}
-                <li>{{ song.title }} by {{ song.artist }}</li>
-            {% empty %}
-                <li>No songs found.</li>
-            {% endfor %}
-            </ul>
-
-            <h4>Podcasts</h4>
-            <ul>
-            {% for podcast in podcasts %}
-                <li>{{ podcast.title }} by {{ podcast.creator }}</li>
-            {% empty %}
-                <li>No podcasts found.</li>
-            {% endfor %}
-            </ul>
-
-            <h4>User Playlists</h4>
-            <ul>
-            {% for playlist in playlists %}
-                <li>{{ playlist.title }} by {{ playlist.user.username }}</li>
-            {% empty %}
-                <li>No playlists found.</li>
-            {% endfor %}
-            </ul>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Title</th>
+                        <th>By</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for song in songs %}
+                    <tr>
+                        <td>SONG</td>
+                        <td>{{ song.title }}</td>
+                        <td>{{ song.artist }}</td>
+                        <td><a href="{% url 'song_detail' song.id %}">Lihat</a></td>
+                    </tr>
+                    {% endfor %}
+                    {% for podcast in podcasts %}
+                    <tr>
+                        <td>PODCAST</td>
+                        <td>{{ podcast.title }}</td>
+                        <td>{{ podcast.creator }}</td>
+                        <td><a href="{% url 'podcast_detail' podcast.id %}">Lihat</a></td>
+                    </tr>
+                    {% endfor %}
+                    {% for playlist in playlists %}
+                    <tr>
+                        <td>USER PLAYLIST</td>
+                        <td>{{ playlist.title }}</td>
+                        <td>{{ playlist.user.username }}</td>
+                        <td><a href="{% url 'playlist_detail' playlist.id %}">Lihat</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         {% else %}
             <p>No results found for "{{ query }}".</p>
         {% endif %}

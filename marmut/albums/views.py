@@ -1,4 +1,7 @@
 from django.shortcuts import render
+from django.contrib.auth.models import User
+from .models import Song, Podcast, UserPlaylist
+
 
 def show_albums(request):
     # label_acc = {'label':'HYBE'}
@@ -209,3 +212,19 @@ def edit_song(request, id_song):
     }
 
     return render(request, 'edit_song.html', context)
+
+def search_results(request):
+    query = request.GET.get('q', '')
+    if query:
+        songs = Song.objects.filter(title__icontains=query)
+        podcasts = Podcast.objects.filter(title__icontains=query)
+        playlists = UserPlaylist.objects.filter(title__icontains=query)
+        results = {
+            'songs': songs,
+            'podcasts': podcasts,
+            'playlists': playlists,
+            'query': query
+        }
+    else:
+        results = {'query': None}
+    return render(request, 'search_page.html', results)

@@ -1,4 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Paket, Transaksi
+from django.contrib import messages
 
 # Create your views here.
 def show_dashboard(request):
@@ -19,3 +21,24 @@ def show_royalties(request):
     }
 
     return render(request, 'cek_royalti.html', context)
+
+
+def daftar_paket(request):
+    pakets = Paket.objects.all()
+    return render(request, 'daftar_paket.html', {'pakets': pakets})
+
+def berlangganan_paket(request, paket_id):
+    paket = get_object_or_404(Paket, id=paket_id)
+    if request.method == 'POST':
+        Transaksi.objects.create(
+            user=request.user,
+            paket=paket,
+            metode_pembayaran=request.POST.get('metode_pembayaran')
+        )
+        messages.success(request, 'Berhasil berlangganan paket!')
+        return redirect('riwayat_transaksi')
+    return render(request, 'berlangganan_paket.html', {'paket': paket})
+
+def riwayat_transaksi(request):
+    transaksi = Transaksi.objects.filter(user=request.user)
+    return render(request, 'riwayat_transaksi.html', {'transaksi': transaksi})

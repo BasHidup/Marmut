@@ -1,15 +1,12 @@
 {% block content %}
+{% include "navbar.html" %}
 <head>
     <title>Create New Album</title>
 </head>
 <body>
+    <h2>buat navbar yang udah buat, bisa tulis di file "templates/navbar.html" yaaa</h2>
+    <h5>trus untuk tiap halaman (yang perlu navbar), jangan lupa buat tambahin include navbar.html biar navbarnya muncul</h5>
     <h1>Ini cuma buat ngecek bisa ke dashboard atau ngga</h1>
-    <h3>silakan diganti jika ingin</h3>
-    <button id="royalti">Cek Royalti</button>
+    <h3>silakan diganti</h3>
 </body>
-<script>
-    document.getElementById('royalti').addEventListener('click', function() {
-        window.location.href = '/cek-royalti/';
-    });
-</script>
 {% endblock content %}

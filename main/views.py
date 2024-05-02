@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Paket, Transaksi
+from .models import Paket, Transaksi, Song, Podcast, UserPlaylist
 from django.contrib import messages
 
 # Create your views here.
@@ -42,3 +42,20 @@ def berlangganan_paket(request, paket_id):
 def riwayat_transaksi(request):
     transaksi = Transaksi.objects.filter(user=request.user)
     return render(request, 'riwayat_transaksi.html', {'transaksi': transaksi})
+
+
+def search_results(request):
+    query = request.GET.get('q', '')
+    if query:
+        songs = Song.objects.filter(title__icontains=query)
+        podcasts = Podcast.objects.filter(title__icontains=query)
+        playlists = UserPlaylist.objects.filter(title__icontains=query)
+        results = {
+            'songs': songs,
+            'podcasts': podcasts,
+            'playlists': playlists,
+            'query': query
+        }
+    else:
+        results = {'query': None}
+    return render(request, 'search_page.html', results)

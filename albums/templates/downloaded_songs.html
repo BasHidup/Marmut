@@ -56,7 +56,7 @@
                 <tr>
                     <th>Title</th>
                     <th>Artist</th>
-                    <th>Download Date</th>
+                    <!-- <th>Download Date</th> -->
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -65,7 +65,7 @@
                 <tr>
                     <td>{{ song.judul }}</td>
                     <td>{{ song.artist }}</td>
-                    <td>{{ song.tanggal_download|date:"d M Y" }}</td>
+                    <!-- <td>{{ song.tanggal_download|date:"d M Y" }}</td> -->
                     <td>
                         <a href="{% url 'song_detail' song.id %}" class="btn btn-primary">View</a>
                         <form action="{% url 'delete_song' song.id %}" method="post" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this song?');">

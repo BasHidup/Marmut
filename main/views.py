@@ -1,9 +1,10 @@
 from django.shortcuts import render
 
 # Create your views here.
+
 def show_dashboard(request):
     
-    return render(request, 'dashboard.html')
+    return render(request, 'dashboardlabel.html')
 
 def show_royalties(request):
     royalties = [

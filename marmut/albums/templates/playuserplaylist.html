@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detail Playlist</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #E9DDC7; 
+      color: #000000;
+    }
+    .container {
+      margin-top: 5%;
+    }
+    .card {
+      background-color: #E9DDC7;
+      border-color: #816454;
+    }
+    .card-header {
+      background-color: #816454;
+      color: #FFFFFF; 
+    }
+    .btn-primary {
+      background-color: #816454;
+      border-color: #816454; 
+    }
+    .btn-primary:hover {
+      background-color: #F5C98C; 
+      border-color: #816454;  
+      color: #000000;
+    }
+    .card-footer {
+      background-color: #E9DDC7;
+      color: #000000;
+    }
+  </style>
+</head>
+<body>
+  <div class="container mt-5">
+    <div class="card">
+      <div class="card-header">
+        <h2>User Playlist Detail</h2>
+      </div>
+      <div class="card-body">
+        <!-- Detail Playlist -->
+        <div class="mb-4">
+          <h3>Detail Playlist</h3>
+          <p>Judul: Playlist1</p>
+          <p>Pembuat: Pembuat1</p>
+          <p>Jumlah Lagu: 12</p>
+          <p>Total Durasi: 8 jam 20 menit</p>
+          <p>Tanggal Dibuat: 18/03/24</p>
+          <p>Deskripsi: Lorem Ipsum ...</p>
+        </div>
+
+        <!-- Garis Pembatas -->
+        <hr>
+
+        <!-- Tombol Shuffle Play dan Kembali -->
+        <div class="text-center mb-4">
+          <a href="#" class="btn btn-primary mr-3">Shuffle Play</a>
+          <a href="index.html" class="btn btn-secondary">Kembali</a>
+        </div>
+
+        <!-- Daftar Lagu -->
+        <h3>Daftar Lagu</h3>
+        <table class="table mt-3">
+          <thead>
+            <tr>
+              <th scope="col">Judul Lagu</th>
+              <th scope="col">Oleh</th>
+              <th scope="col">Durasi</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="song-list">
+            <tr>
+              <td>Song1</td>
+              <td>Artist1</td>
+              <td>2 menit</td>
+              <td>
+                <a href="#" class="btn btn-primary">Lihat</a>
+                <a href="#" class="btn btn-secondary">Play</a>
+                <a href="#" class="btn btn-danger">Hapus</a>
+              </td>
+            </tr>
+            <tr>
+              <td>Song2</td>
+              <td>Artist2</td>
+              <td>3 menit</td>
+              <td>
+                <a href="#" class="btn btn-primary">Lihat</a>
+                <a href="#" class="btn btn-secondary">Play</a>
+                <a href="#" class="btn btn-danger">Hapus</a>
+              </td>
+            </tr>
+            {% for song in songs %}
+            <tr>
+              <td>{{ song.title }}</td>
+              <td>{{ song.artist }}</td>
+              <td>{{ song.duration }}</td>
+              <td>
+                <a href="#" class="btn btn-primary">Lihat</a>
+                <a href="#" class="btn btn-primary">Play</a>
+                <a href="#" class="btn btn-danger">Hapus</a>
+              </td>
+            </tr>
+            {% endfor %}
+            <!-- Dan seterusnya -->
+          </tbody>
+        </table>
+
+        <!-- Tombol Tambah Lagu -->
+        <a href="#" class="btn btn-primary">Tambah Lagu</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

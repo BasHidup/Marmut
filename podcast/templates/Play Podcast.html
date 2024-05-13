@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Podcast Player</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Custom CSS -->
+  <style>
+    .podcast-cover {
+      width: 100%;
+      height: auto;
+    }
+    .episode-info {
+      color: #666;
+    }
+      body {
+          background-color: #e9ddc7;
+      }
+      .table {
+          border-radius: 10px;
+          overflow: hidden;
+          border: 1px solid black;
+          box-shadow: 0 2px 4px rgba(0,0,0,1);
+          margin-top: 15px;
+      }
+      th {
+          background-color: #816454;
+          color: white;
+          border: 1px solid black;
+      }
+      td {
+          border: 1px solid black;
+      }
+      a {
+          color: #816454;
+          padding: 8px;
+          position: relative;
+      }
+      a:hover::after {
+          content: attr(data-text); 
+          position: absolute;
+          top: 100%; 
+          left: 50%;
+          transform: translateX(-50%);
+          background-color: rgb(0, 0, 0);
+          color: white;
+          padding: 4px 8px;
+          border-radius: 4px;
+          font-size: 12px;
+          z-index: 1;
+      }
+  </style>
+</head>
+<body>
+
+  <div class="container mt-4">
+    <div class="row">
+      <div class="col-md-4 mb-4">
+
+        <h4 class="text-center">Podcast Detail</h4>
+        <div class="mb-4"></div>
+
+        <img src="marmut.png" alt="Podcast Cover" class="podcast-cover mb-3">
+        <h3>Judul Podcast</h3>
+        <p class="episode-info">Genre(s): Komedi, Romansa</p>
+        <p class="episode-info">Podcaster: John Doe</p>
+        <p class="episode-info">Total Durasi: 8 jam 20 menit</p>
+        <p class="episode-info">Tanggal Rilis: 18/03/24</p>
+        <p class="episode-info">Tahun: 2024</p>
+
+        <button class="btn btn-dark mr-2" ><i class="fas fa-arrow-left"></i> Kembali</button> <!-- Back button -->
+      </div>
+
+      <div class="col-md-8 mb-4">
+
+        <h4 class="text-center">Daftar Episode</h4>
+        <div class="mb-4"></div>
+
+        <h5>Judul Episode 1</h5>
+        <p class="episode-info">Durasi: 59 menit </p>
+        <p class="episode-info">Tanggal Rilis: 18/03/24</p>
+        <p class="episode-info">Deskripsi: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget tempus libero.</p>
+        <audio controls style="width: 100%;">
+          <source src="episode.mp3" type="audio/mpeg">
+        </audio>
+        <hr>
+        <div class="mb-4"></div>
+
+        <h5>Judul Episode 2</h5>
+        <p class="episode-info">Durasi: 59 menit </p>
+        <p class="episode-info">Tanggal Rilis: 18/03/24</p>
+        <p class="episode-info">Deskripsi: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget tempus libero.</p>
+        <audio controls style="width: 100%;">
+          <source src="episode.mp3" type="audio/mpeg">
+        </audio>
+        <hr>
+        <div class="mb-4"></div>
+ 
+        <h5>Judul Episode 3</h5>
+        <p class="episode-info">Durasi: 59 menit </p>
+        <p class="episode-info">Tanggal Rilis: 18/03/24</p>
+        <p class="episode-info">Deskripsi: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget tempus libero.</p>
+        <audio controls style="width: 100%;">
+          <source src="episode.mp3" type="audio/mpeg">
+        </audio>
+        <hr>
+        <div class="mb-4"></div>
+
+      </div>
+    </div>
+  </div>
+  <!-- Bootstrap JS and dependencies -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

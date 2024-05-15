@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registration Page</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #E9DDC7; 
+      color: #000000;
+    }
+    .registration-container {
+      margin-top: 5%;
+    }
+    .card {
+      background-color: #E9DDC7;
+      border-color: #816454;
+    }
+    .card-header {
+      background-color: #816454;
+      color: #FFFFFF; 
+    }
+    .btn-primary {
+      background-color: #816454;
+      border-color: #816454; 
+    }
+    .btn-primary:hover {
+      background-color: #F5C98C; 
+      border-color: #816454;  
+      color: #000000;
+    }
+    .card-footer {
+      background-color: #E9DDC7;
+      color: #000000;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="row justify-content-center registration-container">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          Register Pengguna
+        </div>
+        <div class="card-body">
+          <form id="registrationForm">
+            <div class="form-group">
+              <label for="email">Email address</label>
+              <input type="email" class="form-control" id="email" placeholder="Enter email">
+            </div>
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input type="password" class="form-control" id="password" placeholder="Password">
+            </div>
+            <div class="form-group">
+              <label for="nama">Nama</label>
+              <input type="text" class="form-control" id="nama" placeholder="Masukkan nama">
+            </div>
+            <div class="form-group">
+              <label for="gender">Gender</label>
+              <select class="form-control" id="gender">
+                <option value="">Pilih gender</option>
+                <option value="Laki-laki">Laki-laki</option>
+                <option value="Perempuan">Perempuan</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="tempat_lahir">Tempat lahir</label>
+              <input type="text" class="form-control" id="tempat_lahir" placeholder="Masukkan tempat lahir">
+            </div>
+            <div class="form-group">
+              <label for="tanggal_lahir">Tanggal lahir</label>
+              <input type="date" class="form-control" id="tanggal_lahir">
+            </div>
+            <div class="form-group">
+              <label for="kota_asal">Kota asal</label>
+              <input type="text" class="form-control" id="kota_asal" placeholder="Masukkan kota asal">
+            </div>
+            <div class="form-group">
+              <label>Role</label><br>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input role-checkbox" type="checkbox" id="podcaster" value="podcaster">
+                <label class="form-check-label" for="podcaster">Podcaster</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input role-checkbox" type="checkbox" id="artist" value="artist">
+                <label class="form-check-label" for="artist">Artist</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input role-checkbox" type="checkbox" id="songwriter" value="songwriter">
+                <label class="form-check-label" for="songwriter">Songwriter</label>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Register</button>
+          </form>
+        </div>
+        <div class="card-footer">
+          Already have an account? <a href="#" style="color: #000000;">Login here</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<!-- <script>
+  $(document).ready(function() {
+    $('#registrationForm').submit(function(event) {
+      event.preventDefault();
+      var artistChecked = $('#artist').prop('checked');
+      var songwriterChecked = $('#songwriter').prop('checked');
+      var podcasterChecked = $('#podcaster').prop('checked');
+      
+      if ((artistChecked || songwriterChecked) && podcasterChecked) {
+        alert("Artis atau Songwriter tidak dapat menjadi Podcaster, dan sebaliknya.");
+      } else {
+        // Lakukan sesuatu, seperti mengirim data ke server
+        // Contoh:
+        // $(this).unbind('submit').submit();
+      }
+    });
+    
+    $('.role-checkbox').change(function() {
+      var id = $(this).attr('id');
+      if ($(this).prop('checked')) {
+        if (id === 'artist' || id === 'songwriter') {
+          $('#podcaster').prop('disabled', true);
+        } else if (id === 'podcaster') {
+          $('.role-checkbox').not(this).prop('disabled', true);
+        }
+      } else {
+        if (id === 'artist' || id === 'songwriter') {
+          $('#podcaster').prop('disabled', false);
+        } else if (id === 'podcaster') {
+          $('.role-checkbox').not(this).prop('disabled', false);
+        }
+      }
+    });
+  });
+</script> -->
+</body>
+</html>

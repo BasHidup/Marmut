@@ -1,0 +1,65 @@
+{% block content %}
+{% include "navbaruser.html" %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tambah Playlist</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #E9DDC7; 
+      color: #000000;
+    }
+    .container {
+      margin-top: 5%;
+    }
+    .card {
+      background-color: #E9DDC7;
+      border-color: #816454;
+    }
+    .card-header {
+      background-color: #816454;
+      color: #FFFFFF; 
+    }
+    .btn-primary {
+      background-color: #816454;
+      border-color: #816454; 
+    }
+    .btn-primary:hover {
+      background-color: #F5C98C; 
+      border-color: #816454;  
+      color: #000000;
+    }
+    .card-footer {
+      background-color: #E9DDC7;
+      color: #000000;
+    }
+  </style>
+</head>
+<body>
+  <div class="container mt-5">
+    <h2>Tambah Playlist</h2>
+    <div class="card">
+      <div class="card-body">
+        <form id="create-playlist-form">
+          <div class="form-group">
+            <label for="title">Judul</label>
+            <input type="text" class="form-control" id="title" name="title" required>
+          </div>
+          <div class="form-group">
+            <label for="description">Deskripsi</label>
+            <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="playlist.js"></script>
+</body>
+</html>
+{% endblock content %}

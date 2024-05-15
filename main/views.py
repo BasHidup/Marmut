@@ -3,9 +3,10 @@ from .models import Paket, Transaksi
 from django.contrib import messages
 
 # Create your views here.
+
 def show_dashboard(request):
     
-    return render(request, 'dashboard.html')
+    return render(request, 'dashboardlabel.html')
 
 def show_royalties(request):
     royalties = [

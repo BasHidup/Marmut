@@ -1,0 +1,103 @@
+{% block content %}
+{% include "navbaropodcaster.html" %}
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Artist/Songwriter</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #E9DDC7; 
+      color: #000000;
+    }
+    .container {
+      margin-top: 5%;
+    }
+    .card {
+      background-color: #E9DDC7;
+      border-color: #816454;
+      color: #000000;
+    }
+    .card-header {
+      background-color: #816454;
+      color: #FFFFFF; 
+    }
+    .btn-primary {
+      background-color: #816454;
+      border-color: #816454; 
+    }
+    .btn-primary:hover {
+      background-color: #F5C98C; 
+      border-color: #816454;  
+      color: #000000;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2 class="text-center">Dashboard - Podcaster</h2>
+    <div class="card">
+      <div class="card-header">
+        Informasi Pengguna
+      </div>
+      <div class="card-body">
+        <table class="table table-bordered">
+          <tbody>
+            <tr>
+              <th scope="row">Nama</th>
+              <td>Azra Hisman</td>
+            </tr>
+            <tr>
+              <th scope="row">Email</th>
+              <td>azrabhisman@example.com</td>
+            </tr>
+            <tr>
+              <th scope="row">Kota Asal</th>
+              <td>Jakarta</td>
+            </tr>
+            <tr>
+              <th scope="row">Gender</th>
+              <td>Perempuan</td>
+            </tr>
+            <tr>
+              <th scope="row">Tempat Lahir</th>
+              <td>Jakarta</td>
+            </tr>
+            <tr>
+              <th scope="row">Tanggal Lahir</th>
+              <td>2003-12-20</td>
+            </tr>
+            <tr>
+              <th scope="row">Role</th>
+              <td>Podcaster</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card mt-3">
+        <div class="card-header">
+          Daftar Podcast
+        </div>
+        <div class="card-body">
+          <table class="table">
+            <tbody>
+              <tr>
+                <td>Podcast 1</td>
+              </tr>
+              <tr>
+                <td>Podcast 2</td>
+              </tr>
+              <tr>
+                <td>Podcast 3</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </body>
+  </html>
+  {% endblock content %}

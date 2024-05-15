@@ -75,38 +75,17 @@
 
       <div class="col-md-8 mb-4">
 
-        <h4 class="text-center">Daftar Episode</h4>
-        <div class="mb-4"></div>
-
-        <h5>Judul Episode 1</h5>
-        <p class="episode-info">Durasi: 59 menit </p>
-        <p class="episode-info">Tanggal Rilis: 18/03/24</p>
-        <p class="episode-info">Deskripsi: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget tempus libero.</p>
+        {% for episode in daftar_episode %}
+        <h5>{{ episode.judul_episode }}</h5>
+        <p class="episode-info">Durasi: {{ episode.durasi }} menit</p>
+        <p class="episode-info">Tanggal Rilis: {{ episode.tanggal_rilis }}</p>
+        <p class="episode-info">Deskripsi: {{ episode.deskripsi }}</p>
         <audio controls style="width: 100%;">
-          <source src="episode.mp3" type="audio/mpeg">
+            <source src="episode.mp3" type="audio/mpeg">
         </audio>
         <hr>
         <div class="mb-4"></div>
-
-        <h5>Judul Episode 2</h5>
-        <p class="episode-info">Durasi: 59 menit </p>
-        <p class="episode-info">Tanggal Rilis: 18/03/24</p>
-        <p class="episode-info">Deskripsi: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget tempus libero.</p>
-        <audio controls style="width: 100%;">
-          <source src="episode.mp3" type="audio/mpeg">
-        </audio>
-        <hr>
-        <div class="mb-4"></div>
- 
-        <h5>Judul Episode 3</h5>
-        <p class="episode-info">Durasi: 59 menit </p>
-        <p class="episode-info">Tanggal Rilis: 18/03/24</p>
-        <p class="episode-info">Deskripsi: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget tempus libero.</p>
-        <audio controls style="width: 100%;">
-          <source src="episode.mp3" type="audio/mpeg">
-        </audio>
-        <hr>
-        <div class="mb-4"></div>
+    {% endfor %}
 
       </div>
     </div>

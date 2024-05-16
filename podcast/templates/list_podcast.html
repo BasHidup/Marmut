@@ -70,10 +70,9 @@
           <td>{{ p.durasi }}</td>
           <td>
             <a href="{% url 'podcast:lihat_episode' p.id %}">Lihat Daftar Episode</a><br>
-            <a href="#">Tambah Episode</a><br>
-            <a href="#">Edit Episode</a><br>
+            <a href="{% url 'podcast:tambah_episode' p.id %}">Tambah Episode</a><br>
             <a href="#">Edit Podcast</a><br>
-            <a href="#">Hapus</a>
+            <a href="{% url 'podcast:delete_podcast' p.id %}">Hapus</a>
           </td>
         </tr>
 
@@ -82,6 +81,10 @@
         <!-- Add more rows if needed -->
       </tbody>
     </table>
+
+    <a href="{% url 'podcast:tambah_podcast' email %}">
+      <button  class="btn btn-primary mr-2" ><i class="fas fa-arrow-left"></i> Tambah Podcast</button> <!-- Back button -->
+    </a>
   </div>
 
   <!-- Bootstrap JS and dependencies -->

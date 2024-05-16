@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'albums',
     'main',
     'authentication',
+    'podcast',
+    'chart'
 ]
 
 MIDDLEWARE = [

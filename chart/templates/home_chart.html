@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Daftar Episode pada Podcast1</title>
   <!-- Bootstrap CSS -->
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <head>
@@ -48,40 +47,37 @@
         }
     </style>
 </head>
-</head>
 <body>
   <div class="container mt-4">
-    <h3 class="text-center">Daftar Episode pada Podcast1</h3>
-    <table class="table">
-      <thead>
-        <tr>
-          <th scope="col">Judul Episode</th>
-          <th scope="col">Deskripsi</th>
-          <th scope="col">Durasi</th>
-          <th scope="col">Tanggal</th>
-          <th scope="col">Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>SubJudul1</td>
-          <td>Lorem Ipsum ....</td>
-          <td>59 menit</td>
-          <td>18/03/2024</td>
-          <td><button class="btn">Edit Episode</button> <button class="btn btn-danger">Hapus</button></td>
-        </tr>
-        <tr>
-          <td>SubJudul2</td>
-          <td>Lorem Ipsum ....</td>
-          <td>1 jam 2 menit</td>
-          <td>25/03/2024</td>
-          <td><button class="btn">Edit Episode</button> <button class="btn btn-danger">Hapus</button></td>
-        </tr>
-        <!-- Add more rows if needed -->
-      </tbody>
-    </table>
-  </div>
 
+    <h4 class="text-center">Chart List</h4>
+    <div class="mb-4"></div>
+
+    <div class="row">
+
+      {% for c in chart %}
+      <div class="col-md-6">
+        <div class="card mb-4">
+          <img src="marmut.png" class="card-img-top" alt="Placeholder Image">
+          <div class="card-body">
+            <h5 class="card-title">{{ c.tipe }}</h5>
+            <a href="{% url 'chart:detail_chart' c.id %}" class="btn btn-primary">Lihat Daftar Lagu</a>
+          </div>
+        </div>
+      </div>
+
+      {% endfor %}
+
+
+
+    </div>
+
+    <div class="text-center mx-auto">
+    <button class="btn btn-dark mr-2" ><i class="fas fa-arrow-left"></i> Kembali</button> <!-- Back button -->
+    </div>
+
+
+  </div>
   <!-- Bootstrap JS and dependencies -->
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>

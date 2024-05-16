@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'albums',
     'main',
+    'podcast',
+    'chart'
 ]
 
 MIDDLEWARE = [

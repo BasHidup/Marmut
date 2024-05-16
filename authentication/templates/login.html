@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Page</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #E9DDC7; 
+      color: #000000;
+    }
+    .login-container {
+      margin-top: 5%;
+    }
+    .card {
+      background-color: #E9DDC7;
+      border-color: #816454;
+    }
+    .card-header {
+      background-color: #816454;
+      color: #FFFFFF; 
+    }
+    .btn-primary {
+      background-color: #816454;
+      border-color: #816454; 
+    }
+    .btn-primary:hover {
+      background-color: #F5C98C; 
+      border-color: #816454;  
+      color: #000000;
+    }
+    .card-footer {
+      background-color: #E9DDC7;
+      color: #000000;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="row justify-content-center login-container">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          Login
+        </div>
+        <div class="card-body">
+          {% csrf_token %}
+          <form method="POST">
+            <div class="form-group">
+              <label for="email">Email address</label>
+              <input type="email" class="form-control" id="email" name="email"placeholder="Enter email">
+            </div>
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Login</button>
+          </form>
+          {% if messages %}
+            <ul>
+              {% for message in messages %}
+                <li>{{ message }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+        <div class="card-footer">
+          Don't have an account? <a href="#" style="color: #000000;">Register here</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,7 +1,7 @@
 <!-- list_albums.html -->
 
 {% block content %}
-{% include "navbar.html" %}
+{% include "navbaruser.html" %}
 <head>
     <title>Album List</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -74,7 +74,7 @@
     <div class="container mt-5">
         <h1 class="text-center mb-4">List Album</h1>
         {% if label_acc %}
-        <h4 class="text-center mb-4">di bawah {{ label_acc.label }}</h4>
+        <h4 class="text-center mb-4">di bawah {{ label_acc }}</h4>
         {% endif %}
         <div id="tombol-create">
             <button id="tambah-album">Tambah Album</button>

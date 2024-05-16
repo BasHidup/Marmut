@@ -1,0 +1,111 @@
+{% endblock content %}
+{% include "navbaruser.html" %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Song Detail</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #E9DDC7; 
+      color: #000000;
+    }
+    .container {
+      margin-top: 5%;
+    }
+    .card {
+      background-color: #E9DDC7;
+      border-color: #816454;
+    }
+    .card-header {
+      background-color: #816454;
+      color: #FFFFFF; 
+    }
+    .btn-primary {
+      background-color: #816454;
+      border-color: #816454; 
+    }
+    .btn-primary:hover {
+      background-color: #F5C98C; 
+      border-color: #816454;  
+      color: #000000;
+    }
+    .card-footer {
+      background-color: #E9DDC7;
+      color: #000000;
+    }
+    .btn-group .btn {
+      margin-right: 5px;
+    }
+    .btn-group .btn:last-child {
+      margin-right: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container mt-5">
+    <h2 class="mb-4">SONG DETAIL</h2>
+    <div id="song-detail" class="card">
+      <div class="card-body">
+        <h5 class="card-title">Judul: Song1</h5>
+        <p>Genre(s):<br>
+          - Genre1<br>
+          - Genre2
+        </p>
+        <p>Artist: Artist1</p>
+        <p>Songwriter(s):<br>
+          - Songwriter1<br>
+          - Songwriter2
+        </p>
+        <p>Durasi: 3 menit</p>
+        <p>Tanggal Rilis: 18/03/24</p>
+        <p>Tahun: 2024</p>
+        <p>Total Play: 0</p>
+        <p>Total Downloads: 0</p>
+        <p>Album: Album1</p>
+        <input type="range" class="form-control-range" id="progressSlider" min="0" max="100">
+        <hr>
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="playSong()">Play</button>
+          <button class="btn btn-primary" onclick="addToPlaylist()">Add to Playlist</button>
+          <button class="btn btn-primary" onclick="downloadSong()">Download</button>
+          <a href="song_list.html" class="btn btn-primary">Kembali</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- <script>
+    function playSong() {
+      var progress = // Ambil nilai progress dari slider atau field integer
+      if (progress > 70) {
+        alert("Lagu telah dimainkan lebih dari 70%");
+      } else {
+        alert("Lagu belum dimainkan lebih dari 70%");
+      }
+    }
+
+    function addToPlaylist() {
+      var playlist = // Ambil playlist yang dipilih dari dropdown
+      if (playlist === "") {
+        alert("Pilih playlist terlebih dahulu");
+      } else {
+        alert("Berhasil menambahkan lagu ke playlist");
+      }
+    }
+
+    function downloadSong() {
+      var isPremium = // Cek apakah pengguna memiliki akun premium
+      if (isPremium) {
+        alert("Berhasil mengunduh lagu");
+      } else {
+        alert("Anda harus memiliki akun premium untuk mengunduh lagu");
+      }
+    }
+  </script> -->
+</body>
+</html>
+{% endblock content %}

@@ -1,15 +1,12 @@
 {% block content %}
+
+{% include "navbaruser.html" %}
 <head>
     <title>Create New Album</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         body {
             background-color: #e9ddc7;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
         }
         .form-container {
             width: 50%;
@@ -58,39 +55,48 @@
     </style>
 </head>
 <body>
-    <div class="form-container">
-        <h1>Tambah Album Baru</h1>
-        <div class="input-container">
-            <form method="POST">
-                {% csrf_token %}
-                <div class="mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">Judul Album:</label>
-                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Judul">
-                </div>
-                <div>
-                    <div>
-                        <label for="exampleFormControlInput1" class="form-label">Label:</label>
+    <div class="container d-flex justify-content-center align-items-center min-vh-100">
+        <div class="form-container">
+            <h1>Tambah Album Baru</h1>
+            <div class="input-container">
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="exampleFormControlInput1" class="form-label">Judul Album:</label>
+                        <input type="text" class="form-control" id="exampleFormControlInput1" name="judul" placeholder="Judul">
                     </div>
                     <div>
-                        <select class="form-select" aria-label="Default select example">
-                            <option selected disabled hidden>Choose label</option>
-                            {% for label in labels %}
-                            <option value="{{ label.nama }}">{{ label.name }}</option>
-                            {% endfor %}
-                        </select>
+                        <div>
+                            <label for="exampleFormControlInput1" class="form-label">Label:</label>
+                        </div>
+                        <div>
+                            <select class="form-select" name="id_label" aria-label="Default select example">
+                                <option selected disabled hidden>Choose label</option>
+                                {% for label in labels %}
+                                <option value="{{ label.id }}">{{ label.nama }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
                     </div>
-                </div>
-            </form>
-            <div class="mt-3 text-center">
-                <button id="cancel">Cancel</button>
-                <button id="create-album">Submit</button>
+                    <div class="mt-3 text-center">
+                        <button id="cancel" type="button">Cancel</button>
+                        <button id="create-album" type="submit">Submit</button>
+                    </div>
+                </form>
             </div>
-        </div>
-    </div>    
+        </div>    
+    </div>
 </body>
 <script>
     document.getElementById('cancel').addEventListener('click', function() {
         window.location.href = '/albums/';
     });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('create-album').addEventListener('click', function() {
+            document.querySelector('form').submit();
+        });
+    });
+
 </script>
 {% endblock content %}

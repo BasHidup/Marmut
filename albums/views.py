@@ -12,6 +12,8 @@ from albums.models import DownloadedSong
 def has_logged_in(request):
     if request.session['email'] == 'not found' or request.session['roles'] == 'not found':
         return False
+    
+    return True
 
 def show_albums(request):
     if(not has_logged_in(request)):
@@ -434,24 +436,67 @@ def show_song_detail(request, id_song):
     if(not has_logged_in(request)):
         return redirect('authentication:login_view')
     
-    label_acc = None
-    songs = [
-        {'id_konten':'bb6dd4b7-d706-4b59-aaee-0fdfce057c0a', 'judul':'Bite Me', 'artist':'0626a456-8575-4ee5-8604-a6034e5787e2', 'id_album':'d76fd6f2-c7b6-4a34-bdc1-f873c106808f', 'total_play':1678433, 'total_download':638350, 'judul_album':'Dark Blood', 'durasi':3},
-        {'id_konten':'381a697a-ca46-4072-8ad4-6287a890502a', 'judul':'Next Level', 'artist':'0626a456-8575-4ee5-8604-a6034e5787e2', 'id_album':'928a12f8-cf27-48da-89b3-5cb8a365b56a', 'total_play':2924981, 'total_download':584208, 'judul_album':'Savage - The 1st Mini Album', 'durasi':3},
-        {'id_konten':'7712c805-4ecc-4e89-89c0-6d117b911137', 'judul':'Sacrifice (Eat Me Up)', 'artist':'0626a456-8575-4ee5-8604-a6034e5787e2', 'id_album':'d76fd6f2-c7b6-4a34-bdc1-f873c106808f', 'total_play':4966922, 'total_download':573150, 'judul_album':'Dark Blood', 'durasi':4},
-        {'id_konten':'6fc5d6c1-5bbc-455d-8fb3-d5ff41b118ba', 'judul':'Savage', 'artist':'0626a456-8575-4ee5-8604-a6034e5787e2', 'id_album':'928a12f8-cf27-48da-89b3-5cb8a365b56a', 'total_play':4340261, 'total_download':847948, 'judul_album':'Savage - The 1st Mini Album', 'durasi':5},
-        {'id_konten':'8ed949e6-6655-4bc0-8bfb-fbc942790791', 'judul':'Darari', 'artist':'0626a456-8575-4ee5-8604-a6034e5787e2', 'id_album':'2e77243b-62f3-4a4a-a5b1-c7bf70f85209', 'total_play':1220369, 'total_download':142110, 'judul_album':'THE SECOND STEP : CHAPTER ONE', 'durasi':3},
-        {'id_konten':'313d94d4-be1f-408a-84b9-7428a459efc9', 'judul':'S-CLASS', 'artist':'0626a456-8575-4ee5-8604-a6034e5787e2', 'id_album':'c51e1dfb-b7dc-4914-8646-2550948cc275', 'total_play':1496496, 'total_download':642167, 'judul_album':'5-STAR', 'durasi':2},
-        {'id_konten':'ceb16047-d196-4423-bafa-b4b8de60e3c7', 'judul':'ELEVEN', 'artist':'0626a456-8575-4ee5-8604-a6034e5787e2', 'id_album':'cd808adc-e301-4766-afc0-42a1b54c6781', 'total_play':2527722, 'total_download':309456, 'judul_album':'I\'VE MINE', 'durasi':3},
-        {'id_konten':'919ef45f-2796-4354-90f5-d70dc87a445e', 'judul':'JIKJIN', 'artist':'556079db-acbc-4472-93f0-d0851a1ce2a0', 'id_album':'2e77243b-62f3-4a4a-a5b1-c7bf70f85209', 'total_play':4147755, 'total_download':429754, 'judul_album':'THE SECOND STEP : CHAPTER ONE', 'durasi':4},
-        {'id_konten':'ca1eebd0-46ac-4386-acac-6e2409cf639f', 'judul':'God\'s Menu', 'artist':'556079db-acbc-4472-93f0-d0851a1ce2a0', 'id_album':'c51e1dfb-b7dc-4914-8646-2550948cc275', 'total_play':2149343, 'total_download':572258, 'judul_album':'5-STAR', 'durasi':2},
-        {'id_konten':'86b1eeed-a5f4-49b0-a5e1-e2d89915f7ec', 'judul':'Love Dive', 'artist':'556079db-acbc-4472-93f0-d0851a1ce2a0', 'id_album':'cd808adc-e301-4766-afc0-42a1b54c6781', 'total_play':2184480, 'total_download':477026, 'judul_album':'I\'VE MINE', 'durasi':3},
-    ]
+    cursor = connection.cursor()
+    cursor.execute('SET search_path TO public')
+    query_song = """
+            SELECT 
+                k.judul AS song_title, 
+                u.nama AS artist_name, 
+                k.tanggal_rilis, 
+                k.tahun, 
+                k.durasi, 
+                s.total_play, 
+                s.total_download, 
+                a.judul AS album_title,
+                a.id
+            FROM 
+                KONTEN k
+            JOIN 
+                SONG s ON k.id = s.id_konten
+            JOIN 
+                ALBUM a ON a.id = s.id_album
+            JOIN 
+                ARTIST ar ON ar.id = s.id_artist
+            JOIN 
+                AKUN u ON u.email = ar.email_akun
+            WHERE 
+                k.id = %s
+        """
+    cursor.execute(query_song, [id_song])
+    song_result = cursor.fetchone()
 
-    selected_song = [song for song in songs if song['id_konten'] == id_song][0]
+    song = {
+        'id_konten': id_song,
+        'judul': song_result[0],
+        'artist': song_result[1],
+        'tanggal_rilis': song_result[2],
+        'tahun': song_result[3],
+        'durasi': song_result[4],
+        'total_play': song_result[5],
+        'total_download': song_result[6],
+        'judul_album': song_result[7],
+        'id_album': song_result[8]
+    }
+    print(song)
+    
+    label_acc = None
+    # songs = [
+    #     {'id_konten':'bb6dd4b7-d706-4b59-aaee-0fdfce057c0a', 'judul':'Bite Me', 'artist':'0626a456-8575-4ee5-8604-a6034e5787e2', 'id_album':'d76fd6f2-c7b6-4a34-bdc1-f873c106808f', 'total_play':1678433, 'total_download':638350, 'judul_album':'Dark Blood', 'durasi':3},
+    #     {'id_konten':'381a697a-ca46-4072-8ad4-6287a890502a', 'judul':'Next Level', 'artist':'0626a456-8575-4ee5-8604-a6034e5787e2', 'id_album':'928a12f8-cf27-48da-89b3-5cb8a365b56a', 'total_play':2924981, 'total_download':584208, 'judul_album':'Savage - The 1st Mini Album', 'durasi':3},
+    #     {'id_konten':'7712c805-4ecc-4e89-89c0-6d117b911137', 'judul':'Sacrifice (Eat Me Up)', 'artist':'0626a456-8575-4ee5-8604-a6034e5787e2', 'id_album':'d76fd6f2-c7b6-4a34-bdc1-f873c106808f', 'total_play':4966922, 'total_download':573150, 'judul_album':'Dark Blood', 'durasi':4},
+    #     {'id_konten':'6fc5d6c1-5bbc-455d-8fb3-d5ff41b118ba', 'judul':'Savage', 'artist':'0626a456-8575-4ee5-8604-a6034e5787e2', 'id_album':'928a12f8-cf27-48da-89b3-5cb8a365b56a', 'total_play':4340261, 'total_download':847948, 'judul_album':'Savage - The 1st Mini Album', 'durasi':5},
+    #     {'id_konten':'8ed949e6-6655-4bc0-8bfb-fbc942790791', 'judul':'Darari', 'artist':'0626a456-8575-4ee5-8604-a6034e5787e2', 'id_album':'2e77243b-62f3-4a4a-a5b1-c7bf70f85209', 'total_play':1220369, 'total_download':142110, 'judul_album':'THE SECOND STEP : CHAPTER ONE', 'durasi':3},
+    #     {'id_konten':'313d94d4-be1f-408a-84b9-7428a459efc9', 'judul':'S-CLASS', 'artist':'0626a456-8575-4ee5-8604-a6034e5787e2', 'id_album':'c51e1dfb-b7dc-4914-8646-2550948cc275', 'total_play':1496496, 'total_download':642167, 'judul_album':'5-STAR', 'durasi':2},
+    #     {'id_konten':'ceb16047-d196-4423-bafa-b4b8de60e3c7', 'judul':'ELEVEN', 'artist':'0626a456-8575-4ee5-8604-a6034e5787e2', 'id_album':'cd808adc-e301-4766-afc0-42a1b54c6781', 'total_play':2527722, 'total_download':309456, 'judul_album':'I\'VE MINE', 'durasi':3},
+    #     {'id_konten':'919ef45f-2796-4354-90f5-d70dc87a445e', 'judul':'JIKJIN', 'artist':'556079db-acbc-4472-93f0-d0851a1ce2a0', 'id_album':'2e77243b-62f3-4a4a-a5b1-c7bf70f85209', 'total_play':4147755, 'total_download':429754, 'judul_album':'THE SECOND STEP : CHAPTER ONE', 'durasi':4},
+    #     {'id_konten':'ca1eebd0-46ac-4386-acac-6e2409cf639f', 'judul':'God\'s Menu', 'artist':'556079db-acbc-4472-93f0-d0851a1ce2a0', 'id_album':'c51e1dfb-b7dc-4914-8646-2550948cc275', 'total_play':2149343, 'total_download':572258, 'judul_album':'5-STAR', 'durasi':2},
+    #     {'id_konten':'86b1eeed-a5f4-49b0-a5e1-e2d89915f7ec', 'judul':'Love Dive', 'artist':'556079db-acbc-4472-93f0-d0851a1ce2a0', 'id_album':'cd808adc-e301-4766-afc0-42a1b54c6781', 'total_play':2184480, 'total_download':477026, 'judul_album':'I\'VE MINE', 'durasi':3},
+    # ]
+
+    # selected_song = [song for song in songs if song['id_konten'] == id_song][0]
 
     context = {
-        'song':selected_song,
+        'song':song,
         'label_acc':label_acc,
     }
 

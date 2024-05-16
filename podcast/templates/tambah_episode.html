@@ -51,23 +51,26 @@
 <body>
   <div class="container mt-4">
     <h3 class="text-center">Create Episode</h3>
-    <h3 class="text-center">Podcast1</h3>
-    <form>
+    {% for p in podcast %}
+    <h3 class="text-center">{{ p.judul }}</h3>
+    <form method="POST" action="{% url 'podcast:form_tambah_episode' p.id %}">
+      {% csrf_token %}
       <div class="form-group">
         <label for="judulInput">Judul:</label>
-        <input type="text" class="form-control" id="judulInput" placeholder="Masukkan judul episode">
+        <input type="text" class="form-control" id="judulInput" placeholder="Masukkan judul episode" name="judul">
       </div>
       <div class="form-group">
         <label for="deskripsiInput">Deskripsi:</label>
-        <textarea class="form-control" id="deskripsiInput" rows="3" placeholder="Masukkan deskripsi episode"></textarea>
+        <textarea class="form-control" id="deskripsiInput" rows="3" placeholder="Masukkan deskripsi episode" name="deskripsi"></textarea>
       </div>
       <div class="form-group">
         <label for="durasiInput">Durasi:</label>
-        <input type="text" class="form-control" id="durasiInput" placeholder="Masukkan durasi episode">
+        <input type="text" class="form-control" id="durasiInput" placeholder="Masukkan durasi episode" name="durasi">
       </div>
       <button type="submit" class="btn btn-primary">Submit</button>
     </form>
   </div>
+  {% endfor %}
 
   <!-- Bootstrap JS and dependencies -->
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

@@ -76,9 +76,11 @@
         {% if label_acc %}
         <h4 class="text-center mb-4">di bawah {{ label_acc }}</h4>
         {% endif %}
+        {% if label_acc == None %}
         <div id="tombol-create">
             <button id="tambah-album">Tambah Album</button>
         </div>
+        {% endif %}
         {% if albums %}
         <table class="table table-striped table-hover text-center">
             <thead>
@@ -114,10 +116,6 @@
                         </a>
                         <a href="/albums/{{album.id}}/create-song/" data-text="Tambah lagu">
                             <i class="bi bi-plus"></i>
-                            <span class="d-none d-md-inline"></span>
-                        </a>
-                        <a href="/albums/{{album.id}}/edit-album/" data-text="Edit Album">
-                            <i class="bi bi-pencil-square"></i>
                             <span class="d-none d-md-inline"></span>
                         </a>
                         <a href="" data-text="Hapus">

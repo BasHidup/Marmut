@@ -2,6 +2,9 @@ from django.shortcuts import render, redirect
 from django.db import connection
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseRedirect, HttpResponse
+from django.urls import reverse
 
 @csrf_exempt
 def login_view(request):
@@ -106,3 +109,10 @@ def login_view(request):
             messages.error(request, f'Terjadi kesalahan: {str(e)}')
 
     return render(request, 'login.html')
+
+def logout(request):
+    request.session['email'] = 'not found'
+    request.session['roles'] = 'not found'
+    print("HAI")
+    response = HttpResponseRedirect(reverse('authentication:login_view'))
+    return response

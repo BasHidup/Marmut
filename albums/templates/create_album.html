@@ -63,7 +63,7 @@
                     {% csrf_token %}
                     <div class="mb-3">
                         <label for="exampleFormControlInput1" class="form-label">Judul Album:</label>
-                        <input type="text" class="form-control" id="exampleFormControlInput1" name="judul" placeholder="Judul">
+                        <input type="text" class="form-control" id="exampleFormControlInput1" name="judul_album" placeholder="Judul">
                     </div>
                     <div>
                         <div>
@@ -77,6 +77,51 @@
                                 {% endfor %}
                             </select>
                         </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="song-name" class="form-label">Judul lagu:</label>
+                        <input class="form-control" id="song-name" type="text" placeholder="Song Name" name="judul" aria-label="default input example">
+                    </div>
+                    <div class="mb-3">
+                        <label for="select-artist" class="form-label">Artist:</label>
+                        <select class="form-select" id="select-artist" name="artist" aria-label="Default select example">
+                            <option selected disabled hidden>Select artist</option>
+                            {% for artist in artists %}
+                                {% if akun_ar != None and akun_ar.name == artist.name %}
+                                    <option value="{{ artist.id }}" selected>{{ artist.name }}</option>
+                                {% elif akun_ar == None %}
+                                    <option value="{{ artist.id }}">{{ artist.name }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="select-sw" class="form-label">Songwriter(s):</label>
+                        <select multiple class="form-select" id="select-sw" name="songwriter" aria-label="Multiple select example">
+                            {% for songwriter in songwriters %}
+                                {% if akun_sw != None %}
+                                    {% if akun_sw.name == songwriter.name %}
+                                    <option value="{{ songwriter.id }}" selected hidden>{{ songwriter.name }}</option>
+                                    {% else %}
+                                    <option value="{{ songwriter.id }}">{{ songwriter.name }}</option>
+                                    {% endif %}
+                                {% else %}
+                                <option value="{{ songwriter.id }}">{{ songwriter.name }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="select-genre" class="form-label">Genre(s):</label>
+                        <select multiple class="form-select" id="select-genre" name="genre" aria-label="Multiple select example">
+                            {% for genre in genres %}
+                            <option value="{{ genre.jenis }}">{{ genre.jenis }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="duration" class="form-label">Durasi:</label>
+                        <input class="form-control" id="duration" name="durasi" type="text" placeholder="Durasi lagu (dalam menit)" aria-label="default input example">
                     </div>
                     <div class="mt-3 text-center">
                         <button id="cancel" type="button">Cancel</button>

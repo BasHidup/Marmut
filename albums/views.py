@@ -1,5 +1,8 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
+import psycopg2
+from django.http import HttpResponse
+from django.template import loader
 
 from albums.models import DownloadedSong
 
@@ -7,13 +10,23 @@ def show_albums(request):
     # label_acc = {'label':'HYBE'}
     label_acc = None
     albums = [
-        {'id':'d76fd6f2-c7b6-4a34-bdc1-f873c106808f', 'judul':'Dark Blood', 'jumlah_lagu':11, 'label':'HYBE', 'total_durasi':37},
-        {'id':'928a12f8-cf27-48da-89b3-5cb8a365b56a', 'judul':'Savage - The 1st Mini Album', 'jumlah_lagu':9, 'label':'SM', 'total_durasi':27},
-        {'id':'2e77243b-62f3-4a4a-a5b1-c7bf70f85209', 'judul':'THE SECOND STEP : CHAPTER ONE', 'jumlah_lagu':8, 'label':'YG', 'total_durasi':25},
-        {'id':'c51e1dfb-b7dc-4914-8646-2550948cc275', 'judul':'5-STAR', 'jumlah_lagu':12, 'label':'JYP', 'total_durasi':48},
-        {'id':'cd808adc-e301-4766-afc0-42a1b54c6781', 'judul':'I\'VE MINE', 'jumlah_lagu':10, 'label':'Starship', 'total_durasi':33},
-        {'id':'d76fd6f2-c7b6-4a34-bdc1-f873c106808g', 'judul':'Orange Blood', 'jumlah_lagu':5, 'label':'HYBE', 'total_durasi':15},
+        # {'id':'d76fd6f2-c7b6-4a34-bdc1-f873c106808f', 'judul':'Dark Blood', 'jumlah_lagu':11, 'label':'HYBE', 'total_durasi':37},
+        # {'id':'928a12f8-cf27-48da-89b3-5cb8a365b56a', 'judul':'Savage - The 1st Mini Album', 'jumlah_lagu':9, 'label':'SM', 'total_durasi':27},
+        # {'id':'2e77243b-62f3-4a4a-a5b1-c7bf70f85209', 'judul':'THE SECOND STEP : CHAPTER ONE', 'jumlah_lagu':8, 'label':'YG', 'total_durasi':25},
+        # {'id':'c51e1dfb-b7dc-4914-8646-2550948cc275', 'judul':'5-STAR', 'jumlah_lagu':12, 'label':'JYP', 'total_durasi':48},
+        # {'id':'cd808adc-e301-4766-afc0-42a1b54c6781', 'judul':'I\'VE MINE', 'jumlah_lagu':10, 'label':'Starship', 'total_durasi':33},
+        # {'id':'d76fd6f2-c7b6-4a34-bdc1-f873c106808g', 'judul':'Orange Blood', 'jumlah_lagu':5, 'label':'HYBE', 'total_durasi':15},
     ]
+
+    conn = psycopg2.connect(
+        dbname="postgres",
+        user="postgres",
+        password="6666",
+        host="localhost",
+        port="5432",
+        options="-c search_path=marmut"
+    )
+    cursor = conn.cursor()
 
     if (label_acc):
         albums = [album for album in albums if album['label'] == label_acc['label']]

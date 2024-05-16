@@ -1,3 +1,5 @@
+from uuid import uuid4
+from django.db import connection
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
 import psycopg2
@@ -7,29 +9,43 @@ from django.template import loader
 from albums.models import DownloadedSong
 
 def show_albums(request):
-    # label_acc = {'label':'HYBE'}
     label_acc = None
-    albums = [
-        # {'id':'d76fd6f2-c7b6-4a34-bdc1-f873c106808f', 'judul':'Dark Blood', 'jumlah_lagu':11, 'label':'HYBE', 'total_durasi':37},
-        # {'id':'928a12f8-cf27-48da-89b3-5cb8a365b56a', 'judul':'Savage - The 1st Mini Album', 'jumlah_lagu':9, 'label':'SM', 'total_durasi':27},
-        # {'id':'2e77243b-62f3-4a4a-a5b1-c7bf70f85209', 'judul':'THE SECOND STEP : CHAPTER ONE', 'jumlah_lagu':8, 'label':'YG', 'total_durasi':25},
-        # {'id':'c51e1dfb-b7dc-4914-8646-2550948cc275', 'judul':'5-STAR', 'jumlah_lagu':12, 'label':'JYP', 'total_durasi':48},
-        # {'id':'cd808adc-e301-4766-afc0-42a1b54c6781', 'judul':'I\'VE MINE', 'jumlah_lagu':10, 'label':'Starship', 'total_durasi':33},
-        # {'id':'d76fd6f2-c7b6-4a34-bdc1-f873c106808g', 'judul':'Orange Blood', 'jumlah_lagu':5, 'label':'HYBE', 'total_durasi':15},
-    ]
+    label_id = None
+    albums = []
+    cursor = connection.cursor()
+    if 'roles' in request.session and 'label' in request.session['roles']:
+        try:
+            cursor.execute('SET search_path TO public')
+            email = request.session['email']
+            query_label_name = f"SELECT nama, id FROM LABEL WHERE email = '{email}'"
+            cursor.execute(query_label_name)
+            label_name_result = cursor.fetchone()
+            if label_name_result:
+                label_acc = label_name_result[0]
+                label_id = label_name_result[1]
 
-    conn = psycopg2.connect(
-        dbname="postgres",
-        user="postgres",
-        password="6666",
-        host="localhost",
-        port="5432",
-        options="-c search_path=marmut"
-    )
-    cursor = conn.cursor()
+        except Exception as e:
+            messages.error(request, f'Terjadi kesalahan: {str(e)}')
 
+    # Menambahkan data album ke dalam list albums
+    cursor.execute("""
+        SELECT a.id, a.judul, a.jumlah_lagu, a.id_label, a.total_durasi, l.nama AS label_name
+        FROM ALBUM a
+        INNER JOIN LABEL l ON a.id_label = l.id
+    """)
+    album_results = cursor.fetchall()
+    for album_result in album_results:
+        album = {
+            'id': album_result[0],
+            'judul': album_result[1],
+            'jumlah_lagu': album_result[2],
+            'label': album_result[5],
+            'total_durasi': album_result[4]
+        }
+        albums.append(album)
+    
     if (label_acc):
-        albums = [album for album in albums if album['label'] == label_acc['label']]
+        albums = [album for album in albums if album['label'] == label_acc]
 
     context = {
         'albums':albums,
@@ -39,16 +55,51 @@ def show_albums(request):
     return render(request, "list_albums.html", context)
 
 def create_album(request):
-    label = [
-        {'name':'HYBE'},
-        {'name':'SM'},
-        {'name':'YG'},
-        {'name':'JYP'},
-        {'name':'Starship'},
-    ]
+    if request.method == 'POST':
+        judul = request.POST.get('judul')
+        print(judul)
+        id_label = request.POST.get('id_label')
+        print(id_label)
+
+        # Validasi data, misalnya pastikan judul tidak kosong
+        if not judul:
+            return render(request, 'create_album.html', {'error': 'Judul tidak boleh kosong'})
+        
+        # Generate UUID untuk id album baru
+        id_album = uuid4()
+
+        # Query untuk insert data album baru ke tabel ALBUM
+        query = f"INSERT INTO ALBUM (id, judul, jumlah_lagu, id_label, total_durasi) VALUES ('{id_album}', '{judul}', 0, '{id_label}', 0);"
+
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute('SET search_path TO public')
+                cursor.execute(query)
+        except Exception as e:
+            # Handle error
+            return render(request, 'create_album.html', {'error': str(e)})
+
+        return redirect('albums:show_albums') 
+
+    labels = []
+    cursor = connection.cursor()
+    cursor.execute('SET search_path TO public')
+
+    cursor.execute("""
+        SELECT l.nama, l.id
+        FROM LABEL l
+    """)
+    label_results = cursor.fetchall()
+    for label_result in label_results:
+        label = {
+            'nama': label_result[0],
+            'id':label_result[1]
+        }
+        labels.append(label)
+
 
     context = {
-        'labels':label,
+        'labels':labels,
     }
 
     return render(request, "create_album.html", context)
@@ -125,7 +176,6 @@ def create_song(request, id_album):
     ]
 
     album_name = next((album['judul'] for album in albums if album['id'] == id_album_ini), None)
-    print(album_name)
     context = {
         'logged_in':logged_in,
         'id_album':id_album,

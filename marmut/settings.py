@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'albums',
     'main',
+    'authentication',
     'podcast',
     'chart'
 ]
@@ -94,7 +95,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'postgres',
-        'USER': 'postgres.spmqdagwqceyhcauyscb',
+        'USER': 'postgres.ldbmqbscpwwvqiefvyhz',
         'PASSWORD': 'bashidup123',
         'HOST': 'aws-0-ap-southeast-1.pooler.supabase.com',
         'PORT': '5432',

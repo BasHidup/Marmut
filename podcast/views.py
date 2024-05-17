@@ -301,6 +301,24 @@ def delete_episode(request, id_episode):
 def delete_podcast(request, id):
     sql.query_add(
             f"""
+            DELETE FROM GENRE WHERE id_konten='{id}';
+            """
+        )
+    
+    sql.query_add(
+            f"""
+            DELETE FROM EPISODE WHERE id_konten_podcast='{id}';
+            """
+        )
+    
+    sql.query_add(
+            f"""
+            DELETE FROM PODCAST WHERE id_konten='{id}';
+            """
+        )
+    
+    sql.query_add(
+            f"""
             DELETE FROM KONTEN WHERE id='{id}';
             """
         )

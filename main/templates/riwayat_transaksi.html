@@ -1,5 +1,5 @@
-{% extends 'base.html' %}
 {% block content %}
+{% include 'navbaruser.html' %}
 <head>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
@@ -49,18 +49,20 @@
             <thead>
                 <tr>
                     <th>Nama Paket</th>
-                    <th>Tanggal Transaksi</th>
+                    <th>Tanggal Dimulai</th>
+                    <th>Tanggal Berakhir</th>
                     <th>Metode Pembayaran</th>
                     <th>Nominal</th>
                 </tr>
             </thead>
             <tbody>
-                {% for transaksi in transaksi %}
+                {% for transaksi in transactions %}
                 <tr>
-                    <td>{{ transaksi.paket.nama }}</td>
-                    <td>{{ transaksi.tanggal_mulai|date:"Y-m-d H:i" }}</td>
+                    <td>{{ transaksi.jenis_paket }}</td>
+                    <td>{{ transaksi.tanggal_dimulai }}</td>
+                    <td>{{ transaksi.tanggal_berakhir }}</td>
                     <td>{{ transaksi.metode_pembayaran }}</td>
-                    <td>Rp{{ transaksi.paket.harga }}</td>
+                    <td>{{ transaksi.nominal }}</td>
                 </tr>
                 {% empty %}
                 <tr>

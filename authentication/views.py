@@ -109,7 +109,7 @@ def login_view(request):
                     request.session['email'] = email_found
                     request.session['roles'] = ', '.join(roles)
                     print(roles)
-                    return redirect('main:show_dashboard')
+                    return redirect('main:show_homepage')
                 else:
                     messages.error(request, 'Email atau password salah')
 

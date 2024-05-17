@@ -1,0 +1,90 @@
+{% block content %}
+<style>
+    body {
+        background-color: #e9ddc7;
+    }
+    .table {
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid black;
+        box-shadow: 0 2px 4px rgba(0,0,0,1);
+        margin-top: 15px;
+    }
+    th {
+        background-color: #816454;
+        color: white;
+        border: 1px solid black;
+    }
+    td {
+        border: 1px solid black;
+    }
+    a {
+        color: #816454;
+        padding: 8px;
+        position: relative;
+    }
+    a:hover::after {
+        content: attr(data-text); 
+        position: absolute;
+        top: 100%; 
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: rgb(0, 0, 0);
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        z-index: 1;
+    }
+</style>
+{% include 'navbarpremium.html' %}
+<div class="container mt-5">
+    {% if not songs and not podcasts and not playlists %}
+    <h3 class="text-center">Maaf, pencarian untuk "{{ search_text }}" tidak ditemukan</h3>
+    {% else %}
+    <h1 class="text-center">Hasil Pencarian "{{ search_text }}"</h1>
+    <table class="table">
+        <thead class="thead-dark">
+            <tr>
+                <th>Tipe</th>
+                <th>Judul</th>
+                <th>Oleh</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if songs %}
+            {% for song in songs %}
+            <tr>
+                <td>{{ song.tipe }}</td>
+                <td>{{ song.judul }}</td>
+                <td>{{ song.oleh }}</td>
+                <td><a href="{% url 'albums:show_song_detail' song.id %}" class="btn btn-primary">Lihat</a></td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+            {% if podcasts %}
+            {% for podcast in podcasts %}
+            <tr>
+                <td>{{ podcast.tipe }}</td>
+                <td>{{ podcast.judul }}</td>
+                <td>{{ podcast.oleh }}</td>
+                <td><a href="{% url 'podcast:play_podcast' podcast.id %}" class="btn btn-primary">Lihat</a></td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+            {% if playlists %}
+            {% for playlist in playlists %}
+            <tr>
+                <td>{{ playlist.tipe }}</td>
+                <td>{{ playlist.judul }}</td>
+                <td>{{ playlist.oleh }}</td>
+                <td><a href="{% url 'albums:play_user_playlist' playlist.id %}" class="btn btn-primary">Lihat</a></td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+        </tbody>
+    </table>
+    {% endif %}
+</div>
+{% endblock %}

@@ -6,6 +6,7 @@ from .models import Paket, Transaksi
 from django.contrib import messages
 from django.db import connection
 from datetime import datetime, timedelta
+from django.views.decorators.csrf import csrf_exempt
 
 
 # Create your views here.
@@ -324,6 +325,94 @@ def berlangganan_paket(request, jenis_paket):
         messages.error(request, f'Terjadi kesalahan: {str(e)}')
         return redirect('daftar_paket')
     return render(request, 'berlangganan_paket.html', context)
+
+@csrf_exempt
+def search(request):
+    if not has_logged_in(request):
+        return redirect('authentication:show_start')
+
+    if request.method == 'POST':
+        search_text = request.POST.get('search')
+
+        query_playlist = f"""
+        SELECT 
+            UP.id_playlist,
+            UP.judul, 
+            A.nama
+        FROM 
+            USER_PLAYLIST UP
+        JOIN 
+            AKUN A ON UP.email_pembuat = A.email
+        WHERE 
+            UP.judul ILIKE '%{search_text}%'
+        """
+
+        query_song = f"""
+        SELECT s.id_konten, k.judul, a.nama
+        FROM SONG s
+        JOIN ARTIST ar ON s.id_artist = ar.id
+        JOIN AKUN a ON ar.email_akun = a.email
+        JOIN KONTEN k ON s.id_konten = k.id
+        WHERE k.judul ILIKE '%{search_text}%'
+        """
+
+        query_podcast = f"""
+        SELECT pc.id_konten, k.judul, a.nama
+        FROM PODCAST pc
+        JOIN PODCASTER p ON pc.email_podcaster = p.email
+        JOIN AKUN a ON p.email = a.email
+        JOIN KONTEN k ON pc.id_konten = k.id
+        WHERE k.judul ILIKE '%{search_text}%'
+        """
+
+        context = {
+            'search_text': search_text,
+            'playlists': [],
+            'songs': [],
+            'podcasts': [],
+        }
+
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute('SET search_path TO public')
+                
+                cursor.execute(query_playlist)
+                playlists = cursor.fetchall()
+                for playlist in playlists:
+                    p = {
+                        'id': playlist[0],
+                        'judul': playlist[1],
+                        'oleh': playlist[2],
+                        'tipe': 'USER PLAYLIST'
+                    }
+                    context['playlists'].append(p)
+                
+                cursor.execute(query_song)
+                songs = cursor.fetchall()
+                for song in songs:
+                    s = {
+                        'id': song[0],
+                        'judul': song[1],
+                        'oleh': song[2],
+                        'tipe': 'SONG'
+                    }
+                    context['songs'].append(s)
+                
+                cursor.execute(query_podcast)
+                podcasts = cursor.fetchall()
+                for podcast in podcasts:
+                    p = {
+                        'id': podcast[0],
+                        'judul': podcast[1],
+                        'oleh': podcast[2],
+                        'tipe': 'PODCAST'
+                    }
+                    context['podcasts'].append(p)
+        except Exception as e:
+            messages.error(request, f'Terjadi kesalahan: {str(e)}')
+
+        return render(request, 'search.html', context)
+    return render(request, 'dashboardlabel.html')
 
 
 def riwayat_transaksi(request):

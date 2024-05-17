@@ -30,8 +30,8 @@ def get_db_connection():
         host=db_host,
         port=db_port
     )
-
     return conn
+
 def has_logged_in(request):
     print(request.session['email'])
     print(request.session['roles'])
@@ -1064,6 +1064,8 @@ def download_song(request, song_id):
         else:
             cursor.execute("INSERT INTO DOWNLOADED_SONG (id_song, email_downloader) VALUES (%s, %s)", (song_id, email))
             conn.commit()
+            cursor.execute("UPDATE SONG SET total_download = total_download + 1 WHERE id_konten = %s", (song_id,))
+            conn.commit()
             messages.success(request, 'Lagu berhasil didownload.')
     except Exception as e:
         conn.rollback()
@@ -1090,55 +1092,51 @@ def delete_song_from_playlist(request, playlist_id, song_id):
 def play_user_playlist(request, playlist_id):
     conn = get_db_connection()
     cursor = conn.cursor()
-
-    # Retrieve playlist details
-    query_playlist = """
-        SELECT id_playlist, judul, email_pembuat, jumlah_lagu, total_durasi, tanggal_dibuat, deskripsi, id_user_playlist
-        FROM USER_PLAYLIST
-        WHERE id_playlist = %s;
-    """
-    cursor.execute(query_playlist, (playlist_id,))
-    playlist_row = cursor.fetchone()
-
-    if playlist_row:
-        playlist = {
-            'id': playlist_row[0],
-            'judul': playlist_row[1],
-            'email_pembuat': playlist_row[2],
-            'jumlah_lagu': playlist_row[3],
-            'total_durasi': playlist_row[4],
-            'tanggal_dibuat': playlist_row[5],
-            'deskripsi': playlist_row[6],
-            'id_user_playlist': playlist_row[7]
-        }
-        query_songs = """
-            SELECT SONG.id_konten AS id_lagu,
-                   KONTEN.judul AS judul_lagu,
-                   KONTEN.durasi AS durasi_lagu,
-                   AKUN.nama AS nama_penyanyi
-            FROM USER_PLAYLIST
-            JOIN PLAYLIST_SONG ON USER_PLAYLIST.id_playlist = PLAYLIST_SONG.id_playlist
-            JOIN SONG ON PLAYLIST_SONG.id_song = SONG.id_konten
-            JOIN KONTEN ON SONG.id_konten = KONTEN.id
-            JOIN ARTIST ON SONG.id_artist = ARTIST.id
-            JOIN AKUN ON ARTIST.email_akun = AKUN.email
-            WHERE USER_PLAYLIST.id_playlist = %s;
-        """
-        cursor.execute(query_songs, (playlist_id,))
-        songs_rows = cursor.fetchall()
-
-        songs = [{
-            'id_lagu': row[0],
-            'judul_lagu': row[1],
-            'durasi_lagu': row[2],
-            'nama_penyanyi': row[3]
-        } for row in songs_rows]
+    queryplaylist = """
+                SELECT id_playlist, judul, email_pembuat, jumlah_lagu, total_durasi, tanggal_dibuat, deskripsi, id_user_playlist FROM USER_PLAYLIST WHERE id_playlist = %s;
+                """
+    cursor.execute(queryplaylist, (playlist_id,))
+    playlistrow = cursor.fetchone()
+    playlist = {
+        'id' : playlistrow[0],
+        'judul': playlistrow[1],
+        'email_pembuat': playlistrow[2],
+        'jumlah_lagu': playlistrow[3],
+        'total_durasi': playlistrow[4],
+        'tanggal_dibuat': playlistrow[5],
+        'deskripsi': playlistrow[6],
+        'id_user_playlist': playlistrow[7]
+    }
+    
+    if playlist:
+        querysongs = """
+        SELECT
+        SONG.id_konten AS id_lagu,
+        KONTEN.judul AS judul_lagu,
+        KONTEN.durasi AS durasi_lagu,
+        AKUN.nama AS nama_artis
+        FROM
+            USER_PLAYLIST
+        JOIN
+            PLAYLIST_SONG ON USER_PLAYLIST.id_playlist = PLAYLIST_SONG.id_playlist
+        JOIN
+            SONG ON PLAYLIST_SONG.id_song = SONG.id_konten
+        JOIN
+            KONTEN ON SONG.id_konten = KONTEN.id
+        JOIN
+            ARTIST ON SONG.id_artist = ARTIST.id
+        JOIN
+            AKUN ON ARTIST.email_akun = AKUN.email
+        WHERE
+            USER_PLAYLIST.id_playlist = %s;
+                """
+        cursor.execute(querysongs, (playlist_id,))
+        songsrow = cursor.fetchall()
+        songs = [{'id_lagu': row[0],'judul_lagu': row[1], 'durasi_lagu': row[2], 'nama_penyanyi': row[3]} for row in songsrow]
     else:
         songs = []
-
     cursor.close()
     conn.close()
-
     return render(request, 'playuserplaylist.html', {'playlist': playlist, 'songs': songs})
 
 def shuffle_play(request, id_user_playlist):

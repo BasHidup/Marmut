@@ -72,15 +72,16 @@ def play_podcast(request, id):
     print(data['podcast'][0])
     return render(request, 'play_podcast.html', data)
 
-def list_podcast(request, email='kimberlydouglas@hotmail.com'):
+def list_podcast(request):
     if not has_logged_in(request):
         return redirect('authentication:show_start')
     
     data = {
             'podcast':[],
-            'email':"kimberlydouglas@hotmail.com"
+            'email':""
         }
 
+    data['email'] = request.session.get('email')
     podcast = sql.query_result(f'''
     SELECT K.judul, K.durasi, count(E) as jumlah_episode, K.id, P.EMAIL_PODCASTER
     FROM KONTEN K
@@ -272,60 +273,6 @@ def form_tambah_podcast(request, email):
             )
         return redirect('podcast:list_podcast')
     
-#def edit_podcast(request, id):
-    data = {
-            'id':id,
-            'genre':[]
-        }
-    
-    genre = sql.query_result(f'''
-    SELECT DISTINCT G.GENRE
-    FROM GENRE G
-    ''')
-
-    for row in genre:
-        data['genre'].append({
-            "genre": row[0],
-        })
-
-    data['roles'] = request.session['roles']
-
-    return render(request, 'edit_podcast.html', data)
-
-#def form_edit_podcast(request, id):
-
-    if request.method == "POST":
-        judul = request.POST.get('judul')
-        genre = request.POST.getlist('genre')
-
-        sql.query_add(
-            f"""
-            UPDATE KONTEN
-            SET judul='{judul}'
-            WHERE id='{id}';
-            );
-            """
-        )
-
-        sql.query_add(
-            f"""
-            DELETE FROM GENRE WHERE id_konten='{id}';
-            """
-        )
-
-        for g in genre:
-            sql.query_add(
-                f"""
-                INSERT INTO GENRE(id_konten, genre)
-                VALUES(
-                    '{id}',
-                    '{g}'  
-                );
-                """
-            )
-
-        return redirect('podcast:list_podcast')
-    
 def delete_episode(request, id_episode):
     if not has_logged_in(request):
         return redirect('authentication:show_start')
@@ -373,4 +320,4 @@ def delete_podcast(request, id):
             """
         )
     
-    return redirect('podcast:home_podcast')
+    return redirect('podcast:list_podcast')

@@ -1,5 +1,5 @@
 {% block content %}
-{% include "navbaropodcaster.html" %}
+{% include "navbarpodcaster.html" %}
 
 <html lang="en">
 <head>
@@ -47,27 +47,27 @@
           <tbody>
             <tr>
               <th scope="row">Nama</th>
-              <td>Azra Hisman</td>
+              <td>{{ name }}</td>
             </tr>
             <tr>
               <th scope="row">Email</th>
-              <td>azrabhisman@example.com</td>
+              <td>{{ email }}</td>
             </tr>
             <tr>
               <th scope="row">Kota Asal</th>
-              <td>Jakarta</td>
+              <td>{{ kota_asal }}</td>
             </tr>
             <tr>
               <th scope="row">Gender</th>
-              <td>Perempuan</td>
+              <td>{{ gender }}</td>
             </tr>
             <tr>
               <th scope="row">Tempat Lahir</th>
-              <td>Jakarta</td>
+              <td>{{ tempat_lahir }}</td>
             </tr>
             <tr>
               <th scope="row">Tanggal Lahir</th>
-              <td>2003-12-20</td>
+              <td>{{ tanggal_lahir }}</td>
             </tr>
             <tr>
               <th scope="row">Role</th>

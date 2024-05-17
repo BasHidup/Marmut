@@ -2,9 +2,18 @@ from django.shortcuts import render, redirect
 from django.db import connection
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseRedirect, HttpResponse
+from django.urls import reverse
+
+def show_start(request):
+    return render(request, 'start.html')
 
 @csrf_exempt
 def login_view(request):
+    request.session['email'] = 'not found'
+    request.session['roles'] = 'not found'
+
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
@@ -106,3 +115,12 @@ def login_view(request):
             messages.error(request, f'Terjadi kesalahan: {str(e)}')
 
     return render(request, 'login.html')
+
+def logout(request):
+    request.session['email'] = 'not found'
+    request.session['roles'] = 'not found'
+    print("setelah logout")
+    print(request.session['email'])
+    print(request.session['roles'])
+    response = HttpResponseRedirect(reverse('authentication:show_start'))
+    return response

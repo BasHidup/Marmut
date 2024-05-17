@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Playlist</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #E9DDC7;
+            color: #000000;
+        }
+        .container {
+            margin-top: 5%;
+        }
+        .card {
+            background-color: #E9DDC7;
+            border-color: #816454;
+        }
+        .card-header {
+            background-color: #816454;
+            color: #FFFFFF;
+        }
+        .btn-primary {
+            background-color: #816454;
+            border-color: #816454;
+        }
+        .btn-primary:hover {
+            background-color: #F5C98C;
+            border-color: #816454;
+            color: #000000;
+        }
+        .card-footer {
+            background-color: #E9DDC7;
+            color: #000000;
+        }
+    </style>
+</head>
+<body>
+
+    {% include "navbaruser.html" %}
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h1 class="text-center">Edit Playlist</h1>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="judul">Judul:</label>
+                    <input type="text" class="form-control" id="judul" name="judul" value="{{ playlist.judul }}">
+                </div>
+                <div class="form-group">
+                    <label for="deskripsi">Deskripsi:</label>
+                    <textarea class="form-control" id="deskripsi" name="deskripsi">{{ playlist.deskripsi }}</textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Simpan</button>
+            </form>
+        </div>
+        <div class="card-footer text-center">
+            <p>&copy; 2024 Marmut Project</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

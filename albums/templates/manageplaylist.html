@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelola Playlist</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #E9DDC7;
+            color: #000000;
+        }
+        .container {
+            margin-top: 5%;
+        }
+        .card {
+            background-color: #E9DDC7;
+            border-color: #816454;
+        }
+        .card-header {
+            background-color: #816454;
+            color: #FFFFFF;
+        }
+        .btn-primary {
+            background-color: #816454;
+            border-color: #816454;
+        }
+        .btn-primary:hover {
+            background-color: #F5C98C;
+            border-color: #816454;
+            color: #000000;
+        }
+        .card-footer {
+            background-color: #E9DDC7;
+            color: #000000;
+        }
+    </style>
+</head>
+<body>
+
+    {% include "navbaruser.html" %}
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h1 class="text-center">Kelola Playlist</h1>
+        </div>
+        <div class="card-body">
+            {% if playlists %}
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Judul</th>
+                            <th scope="col">Jumlah Lagu</th>
+                            <th scope="col">Total Durasi</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for playlist in playlists %}
+                            <tr>
+                                <td>{{ playlist.judul }}</td>
+                                <td>{{ playlist.jumlah_lagu }}</td>
+                                <td>{{ playlist.total_durasi }}</td>
+                                <td>
+                                    <a class="btn btn-primary" href="{% url 'albums:playlist_detail' playlist.id %}">Detail</a>
+                                    <a class="btn btn-secondary" href="{% url 'albums:edit_playlist' playlist.id %}">Ubah</a>
+                                    <form action="{% url 'albums:delete_playlist' playlist.id %}" method="post" style="display:inline;">
+                                        {% csrf_token %}
+                                        <button class="btn btn-danger" type="submit">Hapus</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>Anda belum memiliki playlist</p>
+            {% endif %}
+            <a class="btn btn-primary" href="{% url 'albums:add_playlist' %}">Tambah Playlist</a>
+        </div>
+        <div class="card-footer text-center">
+            <p>&copy; 2024 Marmut Project</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

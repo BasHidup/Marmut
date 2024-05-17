@@ -1,0 +1,97 @@
+<!-- templates/homepage.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homepage</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #E9DDC7; 
+            color: #000000;
+        }
+        .card {
+            margin: 15px;
+            background-color: #E9DDC7;
+            border-color: #816454;
+        }
+        .card-header {
+            background-color: #816454;
+            color: #FFFFFF; 
+        }
+        .btn-primary {
+            background-color: #816454;
+            border-color: #816454; 
+        }
+        .btn-primary:hover {
+            background-color: #F5C98C; 
+            border-color: #816454;  
+            color: #000000;
+        }
+    </style>
+    
+</head>
+<body>
+    {% include "navbaruser.html" %}
+    <div class="container">
+        <div class="row">
+            <h1 class="col-12 text-center">Homepage</h1>
+
+            <!-- Songs Section -->
+            <div class="col-12">
+                <h2>Songs</h2>
+                <div class="row">
+                    {% for song in songs %}
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header">{{ song.1 }}</div>
+                                <div class="card-body">
+                                    <p>Artist: {{ song.2 }}</p>
+                                    <a href="{% url 'albums:play_song' song.0 %}" class="btn btn-primary">Go to Song</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Podcasts Section -->
+            <div class="col-12">
+                <h2>Podcasts</h2>
+                <div class="row">
+                    {% for podcast in podcasts %}
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header">{{ podcast.1 }}</div>
+                                <div class="card-body">
+                                    <p>Podcaster: {{ podcast.2 }}</p>
+                                    <a href="#" class="btn btn-primary">Go to Podcast</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Playlists Section -->
+            <div class="col-12">
+                <h2>Playlists</h2>
+                <div class="row">
+                    {% for playlist in playlists %}
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header">{{ playlist.1 }}</div>
+                                <div class="card-body">
+                                    <p>Creator: {{ playlist.2 }}</p>
+                                    <a href="{% url 'albums:play_user_playlist' playlist.0 %}" class="btn btn-primary">Go to Playlist</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

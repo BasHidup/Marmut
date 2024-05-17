@@ -85,7 +85,7 @@
           <a class="nav-link" href="#">Chart</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Kelola Playlist</a>
+          <a class="nav-link" href="{% url 'albums:manage_playlists' %}">Kelola Playlist</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#">Langganan Paket</a>
@@ -97,7 +97,10 @@
       </form>
       <ul class="navbar-nav ml-auto">
         <li class="nav-item">
-            <button type="button" class="btn btn-danger">Logout</button>
+          <form action="{% url 'authentication:logout' %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Logout</button>
+        </form>
         </li>
       </ul>
     </div>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tambah Lagu ke Playlist</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #E9DDC7; 
+            color: #000000;
+        }
+        .container {
+            margin-top: 5%;
+        }
+        .card {
+            background-color: #E9DDC7;
+            border-color: #816454;
+        }
+        .card-header {
+            background-color: #816454;
+            color: #FFFFFF; 
+        }
+        .btn-primary {
+            background-color: #816454;
+            border-color: #816454; 
+        }
+        .btn-primary:hover {
+            background-color: #F5C98C; 
+            border-color: #816454;  
+            color: #000000;
+        }
+        .card-footer {
+            background-color: #E9DDC7;
+            color: #000000;
+        }
+    </style>
+</head>
+<body>
+    {% include "navbaruser.html" %}
+    <div class="container">
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="container mt-5">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="text-center">Tambah Lagu ke Playlist</h2>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <p>Judul Lagu</p>
+                        {% for song in songs %}
+                            <p>{{ song.judul_lagu }} - {{ song.nama_penyanyi }}</p>
+                        {% endfor %}
+                        <div class="form-group">
+                            <label for="playlist_id">Pilih Playlist:</label>
+                            <select class="form-control" id="playlist_id" name="playlist_id">
+                                {% for playlist in playlists %}
+                                    <option value="{{ playlist.id_playlist }}">{{ playlist.nama_playlist }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Tambahkan Lagu</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

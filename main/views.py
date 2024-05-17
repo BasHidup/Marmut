@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Paket, Transaksi
 from django.contrib import messages
@@ -16,7 +17,73 @@ def show_dashboard(request):
     if not has_logged_in(request):
         return redirect('authentication:show_start')
     
-    return render(request, 'dashboardlabel.html')
+    context = {}
+    if 'roles' in request.session:
+        roles = request.session['roles']
+        with connection.cursor() as cursor:
+            if 'label' in roles:
+                cursor.execute(f"SELECT nama, email FROM LABEL WHERE email = '{request.session['email']}'")
+                row = cursor.fetchone()
+                if row:
+                    context['name'], context['email'], context['role'] = row[0], row[1], 'Label'
+                    return render(request, 'dashboardlabel.html', context)
+                
+            elif 'podcaster' in roles:
+                cursor.execute(f"SELECT nama, email, kota_asal, gender, tempat_lahir, tanggal_lahir FROM AKUN WHERE email = '{request.session['email']}'")
+                row = cursor.fetchone()
+                if row:
+                    if row[3] == 0:
+                        gender = "Laki-Laki"
+                    else:
+                        gender = "Perempuan"
+                    context['name'], context['email'], context['kota_asal'], context['gender'], context['tempat_lahir'], context['tanggal_lahir'], context['role'] = row[0], row[1], row[2], gender, row[4], row[5], 'Podcaster'
+                    return render(request, 'dashboardpodcaster.html', context)
+                
+            elif 'artist' in roles and 'songwriter' in roles:
+                cursor.execute(f"SELECT nama, email, kota_asal, gender, tempat_lahir, tanggal_lahir FROM AKUN WHERE email = '{request.session['email']}'")
+                row = cursor.fetchone()
+                if row:
+                    if row[3] == 0:
+                        gender = "Laki-Laki"
+                    else:
+                        gender = "Perempuan"
+                    context['name'], context['email'], context['kota_asal'], context['gender'], context['tempat_lahir'], context['tanggal_lahir'], context['role'] = row[0], row[1], row[2], gender, row[4], row[5], 'Artist, Songwriter'
+                    return render(request, 'dashboardartist.html', context)
+                
+            elif 'artist' in roles:
+                cursor.execute(f"SELECT nama, email, kota_asal, gender, tempat_lahir, tanggal_lahir FROM AKUN WHERE email = '{request.session['email']}'")
+                row = cursor.fetchone()
+                if row:
+                    if row[3] == 0:
+                        gender = "Laki-Laki"
+                    else:
+                        gender = "Perempuan"
+                    context['name'], context['email'], context['kota_asal'], context['gender'], context['tempat_lahir'], context['tanggal_lahir'], context['role'] = row[0], row[1], row[2], gender, row[4], row[5], 'Artist'
+                    return render(request, 'dashboardartist.html', context)
+                
+            elif 'songwriter' in roles:
+                cursor.execute("SELECT nama, email, kota_asal, gender, tempat_lahir, tanggal_lahir FROM AKUN WHERE email = '{request.session['email']}'")
+                row = cursor.fetchone()
+                if row:
+                    if row[3] == 0:
+                        gender = "Laki-Laki"
+                    else:
+                        gender = "Perempuan"
+                    context['name'], context['email'], context['kota_asal'], context['gender'], context['tempat_lahir'], context['tanggal_lahir'], context['role'] = row[0], row[1], row[2], gender, row[4], row[5], 'Songwriter'
+                    return render(request, 'dashboardartist.html', context)
+                
+            elif 'akun' in roles:
+                cursor.execute("SELECT nama, email, kota_asal, gender, tempat_lahir, tanggal_lahir FROM AKUN WHERE email = '{request.session['email']}'")
+                row = cursor.fetchone()
+                if row:
+                    if row[3] == 0:
+                        gender = "Laki-Laki"
+                    else:
+                        gender = "Perempuan"
+                    context['name'], context['email'], context['kota_asal'], context['gender'], context['tempat_lahir'], context['tanggal_lahir'], context['role'] = row[0], row[1], row[2], gender, row[4], row[5], 'Pengguna Biasa'
+                    return render(request, 'dashboarduser.html', context)
+    
+    return HttpResponse("Role tidak ditemukan atau tidak valid.")
 
 def show_royalties(request):
     if not has_logged_in(request):

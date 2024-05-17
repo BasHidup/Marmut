@@ -4,6 +4,7 @@ from django.shortcuts import redirect
 from uuid import uuid4
 from datetime import date
 import random
+from django.views.decorators.csrf import csrf_exempt
 
 
 def has_logged_in(request):
@@ -178,6 +179,7 @@ def tambah_episode(request, id):
 
     return render(request, 'tambah_episode.html', data)
 
+@csrf_exempt
 def form_tambah_episode(request, id):
     if not has_logged_in(request):
         return redirect('authentication:show_start')
@@ -228,6 +230,7 @@ def tambah_podcast(request, email):
 
     return render(request, 'tambah_podcast.html', data)
 
+@csrf_exempt
 def form_tambah_podcast(request, email):
     if not has_logged_in(request):
         return redirect('authentication:show_start')
@@ -273,6 +276,7 @@ def form_tambah_podcast(request, email):
             )
         return redirect('podcast:list_podcast')
     
+@csrf_exempt
 def delete_episode(request, id_episode):
     if not has_logged_in(request):
         return redirect('authentication:show_start')
@@ -295,6 +299,7 @@ def delete_episode(request, id_episode):
     
     return redirect('podcast:lihat_episode', id=id)
 
+@csrf_exempt
 def delete_podcast(request, id):
     sql.query_add(
             f"""

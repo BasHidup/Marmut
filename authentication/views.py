@@ -6,8 +6,14 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 
+def show_start(request):
+    return render(request, 'start.html')
+
 @csrf_exempt
 def login_view(request):
+    request.session['email'] = 'not found'
+    request.session['roles'] = 'not found'
+
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
@@ -113,6 +119,8 @@ def login_view(request):
 def logout(request):
     request.session['email'] = 'not found'
     request.session['roles'] = 'not found'
-    print("HAI")
-    response = HttpResponseRedirect(reverse('authentication:login_view'))
+    print("setelah logout")
+    print(request.session['email'])
+    print(request.session['roles'])
+    response = HttpResponseRedirect(reverse('authentication:show_start'))
     return response

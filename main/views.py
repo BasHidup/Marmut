@@ -13,12 +13,14 @@ def has_logged_in(request):
     return True
 
 def show_dashboard(request):
+    if not has_logged_in(request):
+        return redirect('authentication:show_start')
     
     return render(request, 'dashboardlabel.html')
 
 def show_royalties(request):
     if not has_logged_in(request):
-        return redirect('authentication:login_view')
+        return redirect('authentication:show_start')
     
     royalties = []
     email = request.session['email']

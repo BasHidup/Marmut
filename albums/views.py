@@ -18,8 +18,8 @@ def has_logged_in(request):
     return True
 
 def show_albums(request):
-    if(not has_logged_in(request)):
-        return redirect('authentication:login_view')
+    if not has_logged_in(request):
+        return redirect('authentication:show_start')
 
     label_acc = None
     label_id = None
@@ -67,8 +67,8 @@ def show_albums(request):
     return render(request, "list_albums.html", context)
 
 def create_album(request):
-    if(not has_logged_in(request)):
-        return redirect('authentication:login_view')
+    if not has_logged_in(request):
+        return redirect('authentication:show_start')
     
     cursor = connection.cursor()
     cursor.execute('SET search_path TO public')
@@ -232,12 +232,6 @@ def create_album(request):
     genres_result = cursor.fetchall()
     genres = [{'jenis': genre[0]} for genre in genres_result]
 
-    # print("akun artist: ", akun_ar)
-    # print("akun sw: ", akun_sw)
-    # print("artists", artists)
-    # print("sws:", songwriter)
-    # print("genre: ", genres)
-
     context = {
         'akun_ar':akun_ar,
         'akun_sw':akun_sw,
@@ -251,7 +245,7 @@ def create_album(request):
 
 def delete_album(request, id_album):
     if not has_logged_in(request):
-        return redirect('authentication:login_view')
+        return redirect('authentication:show_start')
     
     try:
         with connection.cursor() as cursor:
@@ -306,8 +300,8 @@ def delete_album(request, id_album):
     return redirect('albums:show_albums')
 
 def show_songs(request, id_album):
-    if(not has_logged_in(request)):
-        return redirect('authentication:login_view')
+    if not has_logged_in(request):
+        return redirect('authentication:show_start')
     
     id_album_ini = id_album
     label_acc = None
@@ -379,8 +373,8 @@ def show_songs(request, id_album):
     return render(request, "list_songs.html", context)
 
 def create_song(request, id_album):
-    if(not has_logged_in(request)):
-        return redirect('authentication:login_view')
+    if not has_logged_in(request):
+        return redirect('authentication:show_start')
     
     cursor = connection.cursor()
     cursor.execute('SET search_path TO public')
@@ -518,14 +512,6 @@ def create_song(request, id_album):
     genres_result = cursor.fetchall()
     genres = [{'jenis': genre[0]} for genre in genres_result]
 
-    # print("akun artist: ", akun_ar)
-    # print("akun sw: ", akun_sw)
-    # print("id_album: ", id_album)
-    # print("nama album: ", album_name)
-    # print("artists", artists)
-    # print("sws:", songwriter)
-    # print("genre: ", genres)
-
     context = {
         'akun_ar':akun_ar,
         'akun_sw':akun_sw,
@@ -540,8 +526,8 @@ def create_song(request, id_album):
 
 
 def show_song_detail(request, id_song):
-    if(not has_logged_in(request)):
-        return redirect('authentication:login_view')
+    if not has_logged_in(request):
+        return redirect('authentication:show_start')
     
     cursor = connection.cursor()
     cursor.execute('SET search_path TO public')
@@ -596,7 +582,7 @@ def show_song_detail(request, id_song):
 
 def delete_song(request, id_album, id_song):
     if not has_logged_in(request):
-        return redirect('authentication:login_view')
+        return redirect('authentication:show_start')
     
     with connection.cursor() as cursor:
         # Delete from ROYALTI

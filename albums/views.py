@@ -133,6 +133,31 @@ def create_album(request):
                 VALUES (%s, %s)
             """
             cursor.execute(query_genre, [id_konten, genre])
+        
+        # Insert into ROYALTI table
+        processed_pemilik_hak_cipta = set()
+
+        # Get id_pemilik_hak_cipta for the artist
+        cursor.execute("SELECT id_pemilik_hak_cipta FROM ARTIST WHERE id = %s", [artist_id])
+        artist_pemilik_hak_cipta = cursor.fetchone()[0]
+        print("disini line 415", artist_pemilik_hak_cipta)
+        if artist_pemilik_hak_cipta not in processed_pemilik_hak_cipta:
+            query_royalti = """
+                INSERT INTO ROYALTI (id_pemilik_hak_cipta, id_song, jumlah)
+                VALUES (%s, %s, 0)
+            """
+            cursor.execute(query_royalti, [artist_pemilik_hak_cipta, id_konten])
+            processed_pemilik_hak_cipta.add(artist_pemilik_hak_cipta)
+
+        # Get id_pemilik_hak_cipta for each songwriter
+        for songwriter_id in songwriters_ids:
+            cursor.execute("SELECT id_pemilik_hak_cipta FROM SONGWRITER WHERE id = %s", [songwriter_id])
+            songwriter_pemilik_hak_cipta = cursor.fetchone()[0]
+            print("disini line 428", songwriter_pemilik_hak_cipta)
+            if songwriter_pemilik_hak_cipta not in processed_pemilik_hak_cipta:
+                cursor.execute(query_royalti, [songwriter_pemilik_hak_cipta, id_konten])
+                processed_pemilik_hak_cipta.add(songwriter_pemilik_hak_cipta)
+
 
         return redirect('albums:show_albums') 
 
@@ -207,11 +232,11 @@ def create_album(request):
     genres_result = cursor.fetchall()
     genres = [{'jenis': genre[0]} for genre in genres_result]
 
-    print("akun artist: ", akun_ar)
-    print("akun sw: ", akun_sw)
-    print("artists", artists)
-    print("sws:", songwriter)
-    print("genre: ", genres)
+    # print("akun artist: ", akun_ar)
+    # print("akun sw: ", akun_sw)
+    # print("artists", artists)
+    # print("sws:", songwriter)
+    # print("genre: ", genres)
 
     context = {
         'akun_ar':akun_ar,
@@ -238,6 +263,12 @@ def delete_album(request, id_album):
             song_ids = cursor.fetchall()
             
             for id_song in song_ids:
+                # Delete from ROYALTI
+                delete_royalty = """
+                    DELETE FROM ROYALTI WHERE id_song = %s
+                """
+                cursor.execute(delete_royalty, [id_song])
+
                 # Delete from SONGWRITER_WRITE_SONG
                 delete_songwriter_write_song = """
                     DELETE FROM SONGWRITER_WRITE_SONG WHERE id_song = %s
@@ -314,7 +345,7 @@ def show_songs(request, id_album):
     WHERE 
         s.id_album = %s
     """
-    print(id_album_ini)
+    # print(id_album_ini)
     cursor.execute(query_songs, [id_album_ini])
     songs_result = cursor.fetchall()
 
@@ -336,7 +367,7 @@ def show_songs(request, id_album):
     ]
 
     print('----------------------------------------')
-    print(songs)
+    # print(songs)
 
     context = {
         'album_name':album_name,
@@ -399,6 +430,30 @@ def create_song(request, id_album):
                 VALUES (%s, %s)
             """
             cursor.execute(query_genre, [id_konten, genre])
+
+        # Insert into ROYALTI table
+        processed_pemilik_hak_cipta = set()
+
+        # Get id_pemilik_hak_cipta for the artist
+        cursor.execute("SELECT id_pemilik_hak_cipta FROM ARTIST WHERE id = %s", [artist_id])
+        artist_pemilik_hak_cipta = cursor.fetchone()[0]
+        print("disini line 415", artist_pemilik_hak_cipta)
+        if artist_pemilik_hak_cipta not in processed_pemilik_hak_cipta:
+            query_royalti = """
+                INSERT INTO ROYALTI (id_pemilik_hak_cipta, id_song, jumlah)
+                VALUES (%s, %s, 0)
+            """
+            cursor.execute(query_royalti, [artist_pemilik_hak_cipta, id_konten])
+            processed_pemilik_hak_cipta.add(artist_pemilik_hak_cipta)
+
+        # Get id_pemilik_hak_cipta for each songwriter
+        for songwriter_id in songwriters_ids:
+            cursor.execute("SELECT id_pemilik_hak_cipta FROM SONGWRITER WHERE id = %s", [songwriter_id])
+            songwriter_pemilik_hak_cipta = cursor.fetchone()[0]
+            print("disini line 428", songwriter_pemilik_hak_cipta)
+            if songwriter_pemilik_hak_cipta not in processed_pemilik_hak_cipta:
+                cursor.execute(query_royalti, [songwriter_pemilik_hak_cipta, id_konten])
+                processed_pemilik_hak_cipta.add(songwriter_pemilik_hak_cipta)
 
         return redirect('albums:show_songs', id_album=id_album) 
 
@@ -463,13 +518,13 @@ def create_song(request, id_album):
     genres_result = cursor.fetchall()
     genres = [{'jenis': genre[0]} for genre in genres_result]
 
-    print("akun artist: ", akun_ar)
-    print("akun sw: ", akun_sw)
-    print("id_album: ", id_album)
-    print("nama album: ", album_name)
-    print("artists", artists)
-    print("sws:", songwriter)
-    print("genre: ", genres)
+    # print("akun artist: ", akun_ar)
+    # print("akun sw: ", akun_sw)
+    # print("id_album: ", id_album)
+    # print("nama album: ", album_name)
+    # print("artists", artists)
+    # print("sws:", songwriter)
+    # print("genre: ", genres)
 
     context = {
         'akun_ar':akun_ar,
@@ -529,7 +584,7 @@ def show_song_detail(request, id_song):
         'judul_album': song_result[7],
         'id_album': song_result[8]
     }
-    print(song)
+    # print(song)
     
     label_acc = None
     context = {
@@ -544,6 +599,12 @@ def delete_song(request, id_album, id_song):
         return redirect('authentication:login_view')
     
     with connection.cursor() as cursor:
+        # Delete from ROYALTI
+        delete_royalty = """
+            DELETE FROM ROYALTI WHERE id_song = %s
+        """
+        cursor.execute(delete_royalty, [id_song])
+
         # Delete from SONGWRITER_WRITE_SONG
         delete_songwriter_write_song = """
             DELETE FROM SONGWRITER_WRITE_SONG WHERE id_song = %s

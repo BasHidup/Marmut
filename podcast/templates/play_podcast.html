@@ -1,5 +1,17 @@
 {% block content %}
-{% include "navbar.html" %}
+{% if 'label' in roles %}
+    {% include "navbarlabel.html" %}
+{% elif 'artist' in roles and 'songwriter' in roles and 'podcaster' in roles %}
+    {% include "navbarartistpodcaster.html" %}
+{% elif 'artist' in roles %}
+    {% include "navbarartist.html" %}
+{% elif 'songwriter' in roles %}
+    {% include "navbarsongwriter.html" %}
+{% elif 'podcaster' in roles %}
+    {% include "navbarpodcaster.html" %}
+{% else %}
+    {% include "navbaruser.html" %}
+{% endif %}
 
 <!DOCTYPE html>
 <html lang="en">

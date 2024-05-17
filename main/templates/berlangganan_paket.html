@@ -1,5 +1,5 @@
-{% extends 'base.html' %}
 {% block content %}
+{% include 'navbaruser.html' %}
 <head>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
@@ -44,15 +44,32 @@
 </head>
 <body>
     <div class="container mt-5">
-        <h1 class="text-center">Berlangganan Paket: {{ paket.nama }}</h1>
+        <h1 class="text-center">Berlangganan Paket</h1>
+        <h5>Informasi Paket yang Ingin Dibeli:</h>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Jenis</th>
+                    <th>Harga</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ jenis }}</td>
+                    <td>{{ harga }}</td>
+                </tr>
+            </tbody>
+        </table>
         <form method="post">
             {% csrf_token %}
             <div class="form-group">
-                <label for="metode_pembayaran">Metode Pembayaran:</label>
-                <select id="metode_pembayaran" name="metode_pembayaran" class="form-control">
+                <input type="hidden" id="jenis" name="jenis" value="{{ jenis }}">
+                <input type="hidden" id="nominal" name="nominal" value="{{ harga }}">
+                <label for="metode_bayar">Metode Pembayaran:</label>
+                <select id="metode_bayar" name="metode_bayar" class="form-control">
                     <option value="transfer_bank">Bank Transfer</option>
                     <option value="kartu_kredit">Credit Card</option>
-                    <option value="e_wallet">PayPal</option>
+                    <option value="e_wallet">E-Wallet</option>
                 </select>
             </div>
             <button type="submit" class="btn btn-success">Submit</button>

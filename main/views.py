@@ -1,9 +1,11 @@
+import uuid
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 import psycopg2
 from .models import Paket, Transaksi
 from django.contrib import messages
 from django.db import connection
+from datetime import datetime, timedelta
 
 
 # Create your views here.
@@ -174,20 +176,75 @@ def show_royalties(request):
 
 
 def daftar_paket(request):
-    pakets = Paket.objects.all()
-    return render(request, 'daftar_paket.html', {'pakets': pakets})
+    if not has_logged_in(request):
+        return redirect('authentication:show_start')
+    
+    context = {
+        'pakets': []
+    }
+    query = """
+    SELECT * FROM PAKET
+    """
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute('SET search_path TO public')
+            cursor.execute(query)
+            pakets = cursor.fetchall()
+            for paket in pakets:
+                p = {
+                    'jenis': paket[0],
+                    'harga': format_rupiah(paket[1]),
+                }
+                context['pakets'].append(p)
+    except Exception as e:
+        messages.error(request, f'Terjadi kesalahan: {str(e)}')
+    return render(request, 'daftar_paket.html', context)
 
-def berlangganan_paket(request, paket_id):
-    paket = get_object_or_404(Paket, id=paket_id)
+def berlangganan_paket(request, jenis_paket):
+    if not has_logged_in(request):
+        return redirect('authentication:show_start')
+    
     if request.method == 'POST':
-        Transaksi.objects.create(
-            user=request.user,
-            paket=paket,
-            metode_pembayaran=request.POST.get('metode_pembayaran')
-        )
+        id = uuid.uuid4()
+        jenis_paket = request.POST.get('jenis')
+        email = request.session['email'] 
+        timestamp_dimulai = datetime.now()
+        timestamp_berakhir = update_timestamp(timestamp_dimulai, jenis_paket)
+        metode_bayar = request.POST.get('metode_bayar')
+        nominal = reverse_format_rupiah(request.POST.get('nominal'))
+
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute('SET search_path TO public')
+                
+                cursor.execute(f"""
+                INSERT INTO TRANSACTION (id, jenis_paket, email, timestamp_dimulai, timestamp_berakhir, metode_bayar, nominal)
+                VALUES ('{id}', '{jenis_paket}', '{email}', '{timestamp_dimulai}', '{timestamp_berakhir}', '{metode_bayar}', {nominal})
+                """)
+                connection.commit()
+        except Exception as e:
+            messages.error(request, str(e).splitlines()[0])
+            return redirect('main:daftar_paket')
         messages.success(request, 'Berhasil berlangganan paket!')
-        return redirect('riwayat_transaksi')
-    return render(request, 'berlangganan_paket.html', {'paket': paket})
+        return redirect('main:daftar_paket')
+    
+    query = f"""
+    SELECT * FROM PAKET WHERE jenis = '{jenis_paket}'
+    """
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute('SET search_path TO public')
+            cursor.execute(query)
+            paket = cursor.fetchone()
+            context = {
+                'jenis': paket[0],
+                'harga': format_rupiah(paket[1]),
+            }
+    except Exception as e:
+        messages.error(request, f'Terjadi kesalahan: {str(e)}')
+        return redirect('daftar_paket')
+    return render(request, 'berlangganan_paket.html', context)
+
 
 def riwayat_transaksi(request):
     transaksi = Transaksi.objects.filter(user=request.user)
@@ -233,3 +290,44 @@ def show_homepage(request):
         'podcasts': podcasts,
         'playlists': playlists,
     })
+
+def format_rupiah(amount):
+    # Convert the amount to an integer (if it's not already)
+    amount = int(amount)
+    
+    # Format the number with commas as thousand separators
+    formatted_amount = f"{amount:,.0f}"
+    
+    # Replace commas with dots
+    formatted_amount = formatted_amount.replace(",", ".")
+    
+    # Add the "Rp" prefix
+    return f"Rp{formatted_amount}"
+
+def reverse_format_rupiah(formatted_amount):
+    # Convert the formatted amount to a string (if it's not already)
+    formatted_amount = str(formatted_amount)
+
+    # Remove the "Rp" prefix
+    if formatted_amount.startswith("Rp"):
+        formatted_amount = formatted_amount[2:]
+    
+    # Replace dots with commas (if necessary)
+    formatted_amount = formatted_amount.replace(".", "")
+    
+    # Convert the cleaned string to an integer
+    amount = int(formatted_amount)
+    
+    return amount
+
+def update_timestamp(timestamp, jenis):    
+    if jenis == "1 bulan":
+        timestamp += timedelta(days=30)
+    elif jenis == "3 bulan":
+        timestamp += timedelta(days=90)
+    elif jenis == "6 bulan":
+        timestamp += timedelta(days=180)
+    elif jenis == "1 tahun":
+        timestamp += timedelta(days=365)
+    
+    return timestamp

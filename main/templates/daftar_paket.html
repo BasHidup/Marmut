@@ -1,5 +1,5 @@
-{% extends 'base.html' %}
 {% block content %}
+{% include 'navbaruser.html' %}
 <head>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
@@ -54,28 +54,23 @@
                 </tr>
             </thead>
             <tbody>
+                {% for paket in pakets %}
                 <tr>
-                    <td>1 Bulan</td>
-                    <td>Rp50,000</td>
-                    <td><a href="#" class="btn btn-primary">Berlangganan</a></td>
+                    <td>{{ paket.jenis }}</td>
+                    <td>{{ paket.harga }}</td>
+                    <td><a href="{% url 'main:berlangganan_paket' paket.jenis %}" class="btn btn-primary">Berlangganan</a></td>
                 </tr>
-                <tr>
-                    <td>3 Bulan</td>
-                    <td>Rp140,000</td>
-                    <td><a href="#" class="btn btn-primary">Berlangganan</a></td>
-                </tr>
-                <tr>
-                    <td>6 Bulan</td>
-                    <td>Rp240,000</td>
-                    <td><a href="#" class="btn btn-primary">Berlangganan</a></td>
-                </tr>
-                <tr>
-                    <td>1 Tahun</td>
-                    <td>Rp400,000</td>
-                    <td><a href="#" class="btn btn-primary">Berlangganan</a></td>
-                </tr>
+                {% endfor %}
             </tbody>
         </table>
+        {% if messages %}
+        <ul>
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+        <a href="#" class="btn btn-primary">Riwayat Transaksi</a>
     </div>
 </body>
 {% endblock %}

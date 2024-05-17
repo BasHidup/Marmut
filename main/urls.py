@@ -7,7 +7,7 @@ urlpatterns = [
     path('', show_dashboard, name='show_dashboard'),
     path('home', show_homepage, name='show_homepage'),
     path('cek-royalti/', show_royalties, name='show_royalties'), 
-     path('paket/', daftar_paket, name='daftar_paket'),
-    path('paket/berlangganan/<int:paket_id>/', berlangganan_paket, name='berlangganan_paket'),
+    path('paket/', daftar_paket, name='daftar_paket'),
+    path('paket/berlangganan/<str:jenis_paket>/', berlangganan_paket, name='berlangganan_paket'),
     path('transaksi/', riwayat_transaksi, name='riwayat_transaksi'),
 ]

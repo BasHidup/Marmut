@@ -641,16 +641,68 @@ def delete_song(request, id_album, id_song):
     return redirect('albums:show_songs', id_album=id_album) 
 
 def downloaded_songs(request):
-    songs = DownloadedSong.objects.filter(user=request.user)  
-    return render(request, 'downloaded_songs.html', {'songs': songs})
+    if not has_logged_in(request):
+        return redirect('authentication:show_start')
+    
+    context = {
+        'downloaded_songs': []
+    }
+    email_downloader = request.session['email']
 
-def delete_downloaded_song(request, song_id):
-    song = get_object_or_404(DownloadedSong, id=song_id, user=request.user)
+    query = f"""
+    SELECT 
+        ds.id_song,
+        k.judul AS judul_lagu,
+        a.nama AS nama_artist
+    FROM 
+        DOWNLOADED_SONG ds
+    JOIN 
+        SONG s ON ds.id_song = s.id_konten
+    JOIN 
+        KONTEN k ON s.id_konten = k.id
+    JOIN 
+        ARTIST ar ON s.id_artist = ar.id
+    JOIN 
+        AKUN a ON ar.email_akun = a.email
+    WHERE 
+        ds.email_downloader = '{email_downloader}';
+    """
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute('SET search_path TO public')
+            
+            cursor.execute(query)
+            downloaded_songs = cursor.fetchall()
+            
+            for song in downloaded_songs:
+                context['downloaded_songs'].append({
+                    'id': song[0],
+                    'title': song[1],
+                    'artist': song[2]
+                })
+    except Exception as e:
+        messages.error(request, f'Terjadi kesalahan: {str(e)}')
+    return render(request, 'downloaded_songs.html', context)
+
+def delete_downloaded_song(request, downloaded_song_id):
+    if not has_logged_in(request):
+        return redirect('authentication:show_start')
+    
     if request.method == 'POST':
-        song_title = song.title  # Menyimpan judul untuk message
-        song.delete()
-        messages.success(request, f'Berhasil menghapus Lagu dengan judul "{song_title}" dari daftar unduhan!')
-        return redirect('downloaded_songs')
+        email_downloader = request.session['email']
+        query = f"""
+        DELETE FROM DOWNLOADED_SONG
+        WHERE id_song = '{downloaded_song_id}' AND email_downloader = '{email_downloader}';
+        """
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute('SET search_path TO public')
+                cursor.execute(query)
+                connection.commit()
+        except Exception as e:
+            messages.error(request, f'Terjadi kesalahan: {str(e)}')
+        return redirect('albums:downloaded_songs')
+
 
 
 @csrf_exempt

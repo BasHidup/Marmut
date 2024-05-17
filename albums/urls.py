@@ -27,8 +27,8 @@ urlpatterns = [
     path('playlists/<uuid:playlist_id>/delete_song/<uuid:song_id>/', delete_song_from_playlist, name='delete_song_from_playlist'),
     path('playlists/play/<uuid:playlist_id>/', play_user_playlist, name='play_user_playlist'),
     path('playlists/play/<uuid:id_user_playlist>/shuffle_play', shuffle_play, name='shuffle_play'),
-    path('songs/', views.downloaded_songs, name='downloaded_songs'),
-    path('songs/delete/<int:song_id>/', views.delete_downloaded_song, name='delete_downloaded_song'),
+    path('downloaded_songs/', views.downloaded_songs, name='downloaded_songs'),
+    path('songs/delete/<uuid:downloaded_song_id>/', views.delete_downloaded_song, name='delete_song'),
     path('<str:id_album>/delete-song/<str:id_song>/', delete_song, name='delete_song'),
     path('<str:id_album>/delete-album/', delete_album, name='delete_album')
 ]

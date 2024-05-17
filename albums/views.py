@@ -30,7 +30,6 @@ def get_db_connection():
         host=db_host,
         port=db_port
     )
-
     return conn
 
 def has_logged_in(request):
@@ -647,16 +646,69 @@ def delete_song(request, id_album, id_song):
     return redirect('albums:show_songs', id_album=id_album) 
 
 def downloaded_songs(request):
-    songs = DownloadedSong.objects.filter(user=request.user)  
-    return render(request, 'downloaded_songs.html', {'songs': songs, 'roles':request.session['roles']})
+    if not has_logged_in(request):
+        return redirect('authentication:show_start')
+    
+    context = {
+        'downloaded_songs': []
+    }
+    email_downloader = request.session['email']
 
-def delete_downloaded_song(request, song_id):
-    song = get_object_or_404(DownloadedSong, id=song_id, user=request.user)
+    query = f"""
+    SELECT 
+        ds.id_song,
+        k.judul AS judul_lagu,
+        a.nama AS nama_artist
+    FROM 
+        DOWNLOADED_SONG ds
+    JOIN 
+        SONG s ON ds.id_song = s.id_konten
+    JOIN 
+        KONTEN k ON s.id_konten = k.id
+    JOIN 
+        ARTIST ar ON s.id_artist = ar.id
+    JOIN 
+        AKUN a ON ar.email_akun = a.email
+    WHERE 
+        ds.email_downloader = '{email_downloader}';
+    """
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute('SET search_path TO public')
+            
+            cursor.execute(query)
+            downloaded_songs = cursor.fetchall()
+            
+            for song in downloaded_songs:
+                context['downloaded_songs'].append({
+                    'id': song[0],
+                    'title': song[1],
+                    'artist': song[2]
+                })
+            context['roles']=request.session['roles']
+    except Exception as e:
+        messages.error(request, f'Terjadi kesalahan: {str(e)}')
+    return render(request, 'downloaded_songs.html', context)
+
+def delete_downloaded_song(request, downloaded_song_id):
+    if not has_logged_in(request):
+        return redirect('authentication:show_start')
+    
     if request.method == 'POST':
-        song_title = song.title  # Menyimpan judul untuk message
-        song.delete()
-        messages.success(request, f'Berhasil menghapus Lagu dengan judul "{song_title}" dari daftar unduhan!')
-        return redirect('downloaded_songs')
+        email_downloader = request.session['email']
+        query = f"""
+        DELETE FROM DOWNLOADED_SONG
+        WHERE id_song = '{downloaded_song_id}' AND email_downloader = '{email_downloader}';
+        """
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute('SET search_path TO public')
+                cursor.execute(query)
+                connection.commit()
+        except Exception as e:
+            messages.error(request, f'Terjadi kesalahan: {str(e)}')
+        return redirect('albums:downloaded_songs')
+
 
 
 @csrf_exempt
@@ -692,6 +744,7 @@ def manage_playlists(request):
         # Jika pengguna belum masuk, arahkan ke halaman login
         return redirect('authentication:login_view')
 
+@csrf_exempt
 def add_playlist(request):
     if request.method == 'POST':
         judul = request.POST['judul']
@@ -766,7 +819,7 @@ def playlist_detail(request, playlist_id):
     conn.close()
     return render(request, 'playlistdetail.html', {'playlist': playlist, 'songs': songs, 'roles':request.session['roles']})
 
-
+@csrf_exempt
 def edit_playlist(request, playlist_id):
     if request.method == 'POST':
         judul = request.POST['judul']
@@ -786,6 +839,7 @@ def edit_playlist(request, playlist_id):
     conn.close()
     return render(request, 'editplaylist.html', {'playlist': playlist, 'roles':request.session['roles']})
 
+@csrf_exempt
 def delete_playlist(request, playlist_id):
     if request.method == 'POST':
         conn = get_db_connection()
@@ -809,7 +863,7 @@ def delete_playlist(request, playlist_id):
         conn.close()
         return redirect('albums:manage_playlists')
 
-
+@csrf_exempt
 def add_song_to_playlist(request, playlist_id):
     if request.method == 'POST':
         song_id = request.POST['song_id']
@@ -835,6 +889,7 @@ def add_song_to_playlist(request, playlist_id):
     conn.close()
     return render(request, 'addsongtoplaylist.html', {'songs': songs, 'roles':request.session['roles']})
 
+@csrf_exempt
 def play_song(request, song_id):
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -924,6 +979,7 @@ def is_user_premium(email):
     conn.close()
     return is_premium
 
+@csrf_exempt
 def add_song_to_playlist_with_option(request, song_id):
     if request.method == 'POST':
         playlist_id = request.POST['playlist_id']
@@ -1006,6 +1062,7 @@ def add_song_to_playlist_with_option(request, song_id):
     
     return render(request, 'addsongtoplaylist2.html', {'playlists': playlists, 'songs': songs, 'roles':request.session['roles']})
 
+@csrf_exempt
 def download_song(request, song_id):
     email = request.session.get('email')
     conn = get_db_connection()
@@ -1018,6 +1075,8 @@ def download_song(request, song_id):
         else:
             cursor.execute("INSERT INTO DOWNLOADED_SONG (id_song, email_downloader) VALUES (%s, %s)", (song_id, email))
             conn.commit()
+            cursor.execute("UPDATE SONG SET total_download = total_download + 1 WHERE id_konten = %s", (song_id,))
+            conn.commit()
             messages.success(request, 'Lagu berhasil didownload.')
     except Exception as e:
         conn.rollback()
@@ -1028,6 +1087,7 @@ def download_song(request, song_id):
 
     return redirect('albums:play_song', song_id=song_id)
 
+@csrf_exempt
 def delete_song_from_playlist(request, playlist_id, song_id):
     try:
         with connection.cursor() as cursor:
@@ -1044,55 +1104,51 @@ def delete_song_from_playlist(request, playlist_id, song_id):
 def play_user_playlist(request, playlist_id):
     conn = get_db_connection()
     cursor = conn.cursor()
-
-    # Retrieve playlist details
-    query_playlist = """
-        SELECT id_playlist, judul, email_pembuat, jumlah_lagu, total_durasi, tanggal_dibuat, deskripsi, id_user_playlist
-        FROM USER_PLAYLIST
-        WHERE id_playlist = %s;
-    """
-    cursor.execute(query_playlist, (playlist_id,))
-    playlist_row = cursor.fetchone()
-
-    if playlist_row:
-        playlist = {
-            'id': playlist_row[0],
-            'judul': playlist_row[1],
-            'email_pembuat': playlist_row[2],
-            'jumlah_lagu': playlist_row[3],
-            'total_durasi': playlist_row[4],
-            'tanggal_dibuat': playlist_row[5],
-            'deskripsi': playlist_row[6],
-            'id_user_playlist': playlist_row[7]
-        }
-        query_songs = """
-            SELECT SONG.id_konten AS id_lagu,
-                   KONTEN.judul AS judul_lagu,
-                   KONTEN.durasi AS durasi_lagu,
-                   AKUN.nama AS nama_penyanyi
-            FROM USER_PLAYLIST
-            JOIN PLAYLIST_SONG ON USER_PLAYLIST.id_playlist = PLAYLIST_SONG.id_playlist
-            JOIN SONG ON PLAYLIST_SONG.id_song = SONG.id_konten
-            JOIN KONTEN ON SONG.id_konten = KONTEN.id
-            JOIN ARTIST ON SONG.id_artist = ARTIST.id
-            JOIN AKUN ON ARTIST.email_akun = AKUN.email
-            WHERE USER_PLAYLIST.id_playlist = %s;
-        """
-        cursor.execute(query_songs, (playlist_id,))
-        songs_rows = cursor.fetchall()
-
-        songs = [{
-            'id_lagu': row[0],
-            'judul_lagu': row[1],
-            'durasi_lagu': row[2],
-            'nama_penyanyi': row[3]
-        } for row in songs_rows]
+    queryplaylist = """
+                SELECT id_playlist, judul, email_pembuat, jumlah_lagu, total_durasi, tanggal_dibuat, deskripsi, id_user_playlist FROM USER_PLAYLIST WHERE id_playlist = %s;
+                """
+    cursor.execute(queryplaylist, (playlist_id,))
+    playlistrow = cursor.fetchone()
+    playlist = {
+        'id' : playlistrow[0],
+        'judul': playlistrow[1],
+        'email_pembuat': playlistrow[2],
+        'jumlah_lagu': playlistrow[3],
+        'total_durasi': playlistrow[4],
+        'tanggal_dibuat': playlistrow[5],
+        'deskripsi': playlistrow[6],
+        'id_user_playlist': playlistrow[7]
+    }
+    
+    if playlist:
+        querysongs = """
+        SELECT
+        SONG.id_konten AS id_lagu,
+        KONTEN.judul AS judul_lagu,
+        KONTEN.durasi AS durasi_lagu,
+        AKUN.nama AS nama_artis
+        FROM
+            USER_PLAYLIST
+        JOIN
+            PLAYLIST_SONG ON USER_PLAYLIST.id_playlist = PLAYLIST_SONG.id_playlist
+        JOIN
+            SONG ON PLAYLIST_SONG.id_song = SONG.id_konten
+        JOIN
+            KONTEN ON SONG.id_konten = KONTEN.id
+        JOIN
+            ARTIST ON SONG.id_artist = ARTIST.id
+        JOIN
+            AKUN ON ARTIST.email_akun = AKUN.email
+        WHERE
+            USER_PLAYLIST.id_playlist = %s;
+                """
+        cursor.execute(querysongs, (playlist_id,))
+        songsrow = cursor.fetchall()
+        songs = [{'id_lagu': row[0],'judul_lagu': row[1], 'durasi_lagu': row[2], 'nama_penyanyi': row[3]} for row in songsrow]
     else:
         songs = []
-
     cursor.close()
     conn.close()
-
     return render(request, 'playuserplaylist.html', {'playlist': playlist, 'songs': songs, 'roles':request.session['roles']})
 
 def shuffle_play(request, id_user_playlist):

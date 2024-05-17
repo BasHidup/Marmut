@@ -5,7 +5,18 @@ from uuid import uuid4
 from datetime import date
 import random
 
+
+def has_logged_in(request):
+    print(request.session['email'])
+    print(request.session['roles'])
+    if request.session['email'] == 'not found' or request.session['roles'] == 'not found':
+        return False
+    
+    return True
+
 def play_podcast(request, id):
+    if not has_logged_in(request):
+        return redirect('authentication:show_start')
 
     data = {
         'episode':[],
@@ -56,11 +67,15 @@ def play_podcast(request, id):
         string += row[0] + ", "
 
     data['podcast_genre'] = string[:-2]
+    data['roles'] = request.session['roles']
 
     print(data['podcast'][0])
     return render(request, 'play_podcast.html', data)
 
 def list_podcast(request, email='kimberlydouglas@hotmail.com'):
+    if not has_logged_in(request):
+        return redirect('authentication:show_start')
+    
     data = {
             'podcast':[],
             'email':"kimberlydouglas@hotmail.com"
@@ -83,9 +98,13 @@ def list_podcast(request, email='kimberlydouglas@hotmail.com'):
             "id":row[3],
         })
     print(data)
+    data['roles'] = request.session['roles']
     return render(request, 'list_podcast.html', data)
 
 def lihat_episode(request, id):
+    if not has_logged_in(request):
+        return redirect('authentication:show_start')
+    
     data = {
             'episode':[],
         }
@@ -104,9 +123,14 @@ def lihat_episode(request, id):
                 "id_episode":row[4]
             })
 
+    data['roles'] = request.session['roles']
+
     return render(request, 'lihat_episode.html', data)
 
 def home_podcast(request):
+    if not has_logged_in(request):
+        return redirect('authentication:show_start')
+    
     data = {
         'podcast':[],
     }
@@ -125,9 +149,14 @@ def home_podcast(request):
             "id":row[3]
         })
 
+    data['roles'] = request.session['roles']
+
     return render(request, 'home_podcast.html', data)
 
 def tambah_episode(request, id):
+    if not has_logged_in(request):
+        return redirect('authentication:show_start')
+    
     data = {
             'podcast':[],
         }
@@ -143,9 +172,15 @@ def tambah_episode(request, id):
             "judul": row[0],
             "id":row[1]
         })
+
+    data['roles'] = request.session['roles']
+
     return render(request, 'tambah_episode.html', data)
 
 def form_tambah_episode(request, id):
+    if not has_logged_in(request):
+        return redirect('authentication:show_start')
+    
     if request.method == "POST":
         id_episode = uuid4()
         judul = request.POST.get('judul')
@@ -170,6 +205,9 @@ def form_tambah_episode(request, id):
         return redirect('podcast:lihat_episode', id=id)
 
 def tambah_podcast(request, email):
+    if not has_logged_in(request):
+        return redirect('authentication:show_start')
+    
     data = {
             'email':email,
             'genre':[]
@@ -184,9 +222,15 @@ def tambah_podcast(request, email):
         data['genre'].append({
             "genre": row[0],
         })
+
+    data['roles'] = request.session['roles']
+
     return render(request, 'tambah_podcast.html', data)
 
 def form_tambah_podcast(request, email):
+    if not has_logged_in(request):
+        return redirect('authentication:show_start')
+    
     if request.method == "POST":
         id_konten = uuid4()
         judul = request.POST.get('judul')
@@ -243,6 +287,9 @@ def form_tambah_podcast(request, email):
         data['genre'].append({
             "genre": row[0],
         })
+
+    data['roles'] = request.session['roles']
+
     return render(request, 'edit_podcast.html', data)
 
 #def form_edit_podcast(request, id):
@@ -280,6 +327,9 @@ def form_tambah_podcast(request, email):
         return redirect('podcast:list_podcast')
     
 def delete_episode(request, id_episode):
+    if not has_logged_in(request):
+        return redirect('authentication:show_start')
+    
     print(id_episode)
     res = sql.query_result(f'''
     SELECT E.id_konten_podcast 

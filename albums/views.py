@@ -32,6 +32,7 @@ def get_db_connection():
     )
 
     return conn
+
 def has_logged_in(request):
     print(request.session['email'])
     print(request.session['roles'])
@@ -85,6 +86,7 @@ def show_albums(request):
     context = {
         'albums':albums,
         'label_acc':label_acc,
+        'roles':request.session['roles']
     }
 
     return render(request, "list_albums.html", context)
@@ -262,6 +264,7 @@ def create_album(request):
         'songwriters':songwriter,
         'genres':genres,
         'labels':labels,
+        'roles':request.session['roles']
     }
 
     return render(request, "create_album.html", context)
@@ -391,6 +394,7 @@ def show_songs(request, id_album):
         'id_album':id_album_ini,
         'songs':songs,
         'label_acc':label_acc,
+        'roles':request.session['roles']
     }
 
     return render(request, "list_songs.html", context)
@@ -543,6 +547,7 @@ def create_song(request, id_album):
         'artists':artists,
         'songwriters':songwriter,
         'genres':genres,
+        'roles':request.session['roles']
     }
 
     return render(request, 'create_song.html', context)
@@ -599,6 +604,7 @@ def show_song_detail(request, id_song):
     context = {
         'song':song,
         'label_acc':label_acc,
+        'roles':request.session['roles']
     }
 
     return render(request, 'song_detail.html', context)
@@ -642,7 +648,7 @@ def delete_song(request, id_album, id_song):
 
 def downloaded_songs(request):
     songs = DownloadedSong.objects.filter(user=request.user)  
-    return render(request, 'downloaded_songs.html', {'songs': songs})
+    return render(request, 'downloaded_songs.html', {'songs': songs, 'roles':request.session['roles']})
 
 def delete_downloaded_song(request, song_id):
     song = get_object_or_404(DownloadedSong, id=song_id, user=request.user)
@@ -681,7 +687,7 @@ def manage_playlists(request):
             messages.error(request, f'Terjadi kesalahan: {str(e)}')
             playlists = []
 
-        return render(request, 'manageplaylist.html', {'playlists': playlists})
+        return render(request, 'manageplaylist.html', {'playlists': playlists, 'roles':request.session['roles']})
     else:
         # Jika pengguna belum masuk, arahkan ke halaman login
         return redirect('authentication:login_view')
@@ -758,7 +764,7 @@ def playlist_detail(request, playlist_id):
         songs = []
     cursor.close()
     conn.close()
-    return render(request, 'playlistdetail.html', {'playlist': playlist, 'songs': songs})
+    return render(request, 'playlistdetail.html', {'playlist': playlist, 'songs': songs, 'roles':request.session['roles']})
 
 
 def edit_playlist(request, playlist_id):
@@ -778,7 +784,7 @@ def edit_playlist(request, playlist_id):
     playlist = cursor.fetchone()
     cursor.close()
     conn.close()
-    return render(request, 'editplaylist.html', {'playlist': playlist})
+    return render(request, 'editplaylist.html', {'playlist': playlist, 'roles':request.session['roles']})
 
 def delete_playlist(request, playlist_id):
     if request.method == 'POST':
@@ -827,7 +833,7 @@ def add_song_to_playlist(request, playlist_id):
     songs = [{'id_lagu': row[0], 'judul_lagu': row[1], 'nama_penyanyi': row[2]} for row in songsrow]
     cursor.close()
     conn.close()
-    return render(request, 'addsongtoplaylist.html', {'songs': songs})
+    return render(request, 'addsongtoplaylist.html', {'songs': songs, 'roles':request.session['roles']})
 
 def play_song(request, song_id):
     conn = get_db_connection()
@@ -903,7 +909,7 @@ def play_song(request, song_id):
         songs = []
     cursor.close()
     conn.close()
-    return render(request, 'playsong.html', {'songs': songs , 'is_premium' : is_premium})
+    return render(request, 'playsong.html', {'songs': songs , 'is_premium' : is_premium, 'roles':request.session['roles']})
 
 def is_user_premium(email):
     conn = get_db_connection()
@@ -998,7 +1004,7 @@ def add_song_to_playlist_with_option(request, song_id):
     cursor.close()
     conn.close()
     
-    return render(request, 'addsongtoplaylist2.html', {'playlists': playlists, 'songs': songs})
+    return render(request, 'addsongtoplaylist2.html', {'playlists': playlists, 'songs': songs, 'roles':request.session['roles']})
 
 def download_song(request, song_id):
     email = request.session.get('email')
@@ -1087,7 +1093,7 @@ def play_user_playlist(request, playlist_id):
     cursor.close()
     conn.close()
 
-    return render(request, 'playuserplaylist.html', {'playlist': playlist, 'songs': songs})
+    return render(request, 'playuserplaylist.html', {'playlist': playlist, 'songs': songs, 'roles':request.session['roles']})
 
 def shuffle_play(request, id_user_playlist):
     conn = get_db_connection()

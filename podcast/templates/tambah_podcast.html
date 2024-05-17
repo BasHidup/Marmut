@@ -51,24 +51,22 @@
 <body>
   <div class="container mt-4">
     <h3 class="text-center">Create Podcast</h3>
-    <form>
+    <form method="POST" action="{% url 'podcast:form_tambah_podcast' email %}">
+      {% csrf_token %}
       <div class="form-group">
         <label for="judulInput">Judul:</label>
-        <input type="text" class="form-control" id="judulInput" placeholder="Masukkan judul podcast">
+        <input type="text" class="form-control" id="judulInput" placeholder="Masukkan judul podcast" name="judul">
       </div>
       <div class="form-group">
         <label for="genreSelect">Genre:</label>
-        <select class="form-control" id="genreSelect" multiple>
-          <option>Musik</option>
-          <option>Comedy</option>
-          <option>Teknologi</option>
-          <option>Politik</option>
+        <select class="form-control" id="genreSelect" name="genre" multiple>
+          {% for g in genre %}
+          <option value="{{ g.genre }}">{{ g.genre }}</option>
+          {% endfor %}
           <!-- Add more options if needed -->
         </select>
       </div>
       <div class="form-group">
-        <label for="durasiInput">Durasi:</label>
-        <input type="text" class="form-control" id="durasiInput" placeholder="Masukkan durasi podcast">
       </div>
       <button type="submit" class="btn btn-primary">Submit</button>
     </form>

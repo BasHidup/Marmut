@@ -69,14 +69,18 @@
           <td>{{ e.deskripsi }}</td>
           <td>{{ e.durasi }}</td>
           <td>{{ e.tanggal_rilis }}</td>
-          <td><button class="btn">Edit Episode</button> <button class="btn btn-danger">Hapus</button></td>
+          <td><button class="btn">Edit Episode</button> 
+            <a href="{% url 'podcast:delete_episode' e.id_episode %}">
+            <button class="btn btn-danger">Hapus</button></td>
+          </a>
         </tr>
         {% endfor %}
         <!-- Add more rows if needed -->
       </tbody>
     </table>
-
+    <a href="{% url 'podcast:list_podcast' %}">
     <button class="btn btn-dark mr-2" ><i class="fas fa-arrow-left"></i> Kembali</button>
+  </a>
   </div>
 
   <!-- Bootstrap JS and dependencies -->

@@ -738,6 +738,7 @@ def manage_playlists(request):
         # Jika pengguna belum masuk, arahkan ke halaman login
         return redirect('authentication:login_view')
 
+@csrf_exempt
 def add_playlist(request):
     if request.method == 'POST':
         judul = request.POST['judul']
@@ -812,7 +813,7 @@ def playlist_detail(request, playlist_id):
     conn.close()
     return render(request, 'playlistdetail.html', {'playlist': playlist, 'songs': songs})
 
-
+@csrf_exempt
 def edit_playlist(request, playlist_id):
     if request.method == 'POST':
         judul = request.POST['judul']
@@ -832,6 +833,7 @@ def edit_playlist(request, playlist_id):
     conn.close()
     return render(request, 'editplaylist.html', {'playlist': playlist})
 
+@csrf_exempt
 def delete_playlist(request, playlist_id):
     if request.method == 'POST':
         conn = get_db_connection()
@@ -855,7 +857,7 @@ def delete_playlist(request, playlist_id):
         conn.close()
         return redirect('albums:manage_playlists')
 
-
+@csrf_exempt
 def add_song_to_playlist(request, playlist_id):
     if request.method == 'POST':
         song_id = request.POST['song_id']
@@ -970,6 +972,7 @@ def is_user_premium(email):
     conn.close()
     return is_premium
 
+@csrf_exempt
 def add_song_to_playlist_with_option(request, song_id):
     if request.method == 'POST':
         playlist_id = request.POST['playlist_id']
@@ -1052,6 +1055,7 @@ def add_song_to_playlist_with_option(request, song_id):
     
     return render(request, 'addsongtoplaylist2.html', {'playlists': playlists, 'songs': songs})
 
+@csrf_exempt
 def download_song(request, song_id):
     email = request.session.get('email')
     conn = get_db_connection()
@@ -1076,6 +1080,7 @@ def download_song(request, song_id):
 
     return redirect('albums:play_song', song_id=song_id)
 
+@csrf_exempt
 def delete_song_from_playlist(request, playlist_id, song_id):
     try:
         with connection.cursor() as cursor:

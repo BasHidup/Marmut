@@ -1,6 +1,20 @@
+{% block content %}
 <!-- templates/homepage.html -->
 <!DOCTYPE html>
 <html lang="en">
+{% if 'label' in roles %}
+    {% include "navbarlabel.html" %}
+{% elif 'artist' in roles and 'songwriter' in roles and 'podcaster' in roles %}
+    {% include "navbarartistpodcaster.html" %}
+{% elif 'artist' in roles %}
+    {% include "navbarartist.html" %}
+{% elif 'songwriter' in roles %}
+    {% include "navbarsongwriter.html" %}
+{% elif 'podcaster' in roles %}
+    {% include "navbarpodcaster.html" %}
+{% else %}
+    {% include "navbaruser.html" %}
+{% endif %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -33,7 +47,6 @@
     
 </head>
 <body>
-    {% include "navbaruser.html" %}
     <div class="container">
         <div class="row">
             <h1 class="col-12 text-center">Homepage</h1>
@@ -95,3 +108,4 @@
     </div>
 </body>
 </html>
+{% endblock content %}

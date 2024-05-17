@@ -24,6 +24,7 @@ def show_dashboard(request):
     
     context = {}
     context['roles']=request.session['roles']
+    roles_splitted = []
     if 'roles' in request.session:
         roles = request.session['roles']
         with connection.cursor() as cursor:
@@ -33,9 +34,11 @@ def show_dashboard(request):
                 if row:
                     context['name'], context['email'], context['role'] = row[0], row[1], 'Label'
                     return render(request, 'dashboardlabel.html', context)
-                
-                
-            elif len(roles) > 2:
+            
+            if ',' in roles: 
+                roles_splitted = roles.split(",")
+
+            if (len(roles_splitted)>2):
                 if 'artist' in roles and 'songwriter' in roles and 'podcaster' in roles:
                     role_ini = 'Artist, Songwriter, Podcaster'
                 elif 'artist' in roles and 'songwriter' in roles:

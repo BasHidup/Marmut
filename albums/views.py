@@ -883,6 +883,7 @@ def add_song_to_playlist(request, playlist_id):
     conn.close()
     return render(request, 'addsongtoplaylist.html', {'songs': songs})
 
+@csrf_exempt
 def play_song(request, song_id):
     conn = get_db_connection()
     cursor = conn.cursor()

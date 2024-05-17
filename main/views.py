@@ -419,8 +419,32 @@ def riwayat_transaksi(request):
     if not has_logged_in(request):
         return redirect('authentication:show_start')
     
-    transaksi = Transaksi.objects.filter(user=request.user)
-    return render(request, 'riwayat_transaksi.html', {'transaksi': transaksi, 'roles':request.session['roles']})
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute('SET search_path TO public')
+            cursor.execute(f"""
+            SELECT * FROM TRANSACTION WHERE email = '{request.session['email']}'
+            """)
+            transactions = cursor.fetchall()
+            context = {
+                'transactions': [],
+                'roles':request.session['roles']
+            }
+            for transaction in transactions:
+                t = {
+                    'id': transaction[0],
+                    'jenis_paket': transaction[1],
+                    'email': transaction[2],
+                    'tanggal_dimulai': transaction[3],
+                    'tanggal_berakhir': transaction[4],
+                    'metode_pembayaran': transaction[5],
+                    'nominal': format_rupiah(transaction[6]),
+                }
+                context['transactions'].append(t)
+    except Exception as e:
+        messages.error(request, f'Terjadi kesalahan: {str(e)}')
+        return redirect('main:show_dashboard')
+    return render(request, 'riwayat_transaksi.html', context)
 
 def show_homepage(request):
     if not has_logged_in(request):

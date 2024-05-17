@@ -15,7 +15,7 @@ def play_podcast(request, id):
     
     eps = sql.query_result(f'''
         select judul, durasi, tanggal_rilis, deskripsi
-        from marmut.episode
+        from episode
         where id_konten_podcast = '{id}';
         ''')
 
@@ -29,9 +29,9 @@ def play_podcast(request, id):
 
     podcast = sql.query_result(f'''
     SELECT K.judul, A.nama, K.durasi, K.tanggal_rilis, K.tahun
-    FROM marmut.KONTEN K
-    JOIN marmut.PODCAST P ON K.id = P.id_konten
-    JOIN marmut.AKUN A ON A.email = P.email_podcaster
+    FROM KONTEN K
+    JOIN PODCAST P ON K.id = P.id_konten
+    JOIN AKUN A ON A.email = P.email_podcaster
     WHERE K.ID = '{id}'
     ''')
 
@@ -46,8 +46,8 @@ def play_podcast(request, id):
         
     genre = sql.query_result(f'''
     SELECT G.GENRE
-    FROM marmut.KONTEN K
-    JOIN marmut.GENRE G ON G.id_konten = K.id
+    FROM KONTEN K
+    JOIN GENRE G ON G.id_konten = K.id
     WHERE K.ID = '{id}'
     ''')     
 
@@ -68,9 +68,9 @@ def list_podcast(request, email='kimberlydouglas@hotmail.com'):
 
     podcast = sql.query_result(f'''
     SELECT K.judul, K.durasi, count(E) as jumlah_episode, K.id, P.EMAIL_PODCASTER
-    FROM marmut.KONTEN K
-    LEFT JOIN MARMUT.EPISODE E ON E.ID_KONTEN_PODCAST = K.ID
-    JOIN MARMUT.PODCAST P ON P.ID_KONTEN = K.ID
+    FROM KONTEN K
+    LEFT JOIN EPISODE E ON E.ID_KONTEN_PODCAST = K.ID
+    JOIN PODCAST P ON P.ID_KONTEN = K.ID
     WHERE P.EMAIL_PODCASTER = '{data['email']}'
     GROUP BY K.judul, K.durasi,K.id, P.EMAIL_PODCASTER
     ''')
@@ -92,7 +92,7 @@ def lihat_episode(request, id):
     
     eps = sql.query_result(f'''
     SELECT E.judul, E.deskripsi, E.durasi, E.tanggal_rilis, E.id_episode
-    FROM marmut.EPISODE E
+    FROM EPISODE E
     WHERE E.id_konten_podcast = '{id}'
     ''')
     for row in eps:
@@ -112,9 +112,9 @@ def home_podcast(request):
     }
     podcast = sql.query_result(f'''
     SELECT K.judul, A.nama, K.durasi, P.id_konten
-    FROM marmut.KONTEN K
-    JOIN marmut.PODCAST P ON K.id = P.id_konten
-    JOIN marmut.AKUN A ON A.email = P.email_podcaster
+    FROM KONTEN K
+    JOIN PODCAST P ON K.id = P.id_konten
+    JOIN AKUN A ON A.email = P.email_podcaster
     ''')
 
     for row in podcast:
@@ -134,7 +134,7 @@ def tambah_episode(request, id):
 
     podcast = sql.query_result(f'''
     SELECT K.judul, K.id
-    FROM marmut.KONTEN K
+    FROM KONTEN K
     WHERE K.ID = '{id}'
     ''')
 
@@ -155,7 +155,7 @@ def form_tambah_episode(request, id):
 
         sql.query_add(
             f"""
-            INSERT INTO marmut.EPISODE(id_episode, id_konten_podcast, judul, deskripsi, durasi, tanggal_rilis)
+            INSERT INTO EPISODE(id_episode, id_konten_podcast, judul, deskripsi, durasi, tanggal_rilis)
             VALUES(
                 '{id_episode}',
                 '{id}',
@@ -177,7 +177,7 @@ def tambah_podcast(request, email):
     
     genre = sql.query_result(f'''
     SELECT DISTINCT G.GENRE
-    FROM marmut.GENRE G
+    FROM GENRE G
     ''')
 
     for row in genre:
@@ -197,7 +197,7 @@ def form_tambah_podcast(request, email):
 
         sql.query_add(
             f"""
-            INSERT INTO marmut.KONTEN(id, judul, tanggal_rilis, tahun, durasi)
+            INSERT INTO KONTEN(id, judul, tanggal_rilis, tahun, durasi)
             VALUES(
                 '{id_konten}',
                 '{judul}',
@@ -209,7 +209,7 @@ def form_tambah_podcast(request, email):
         )
         sql.query_add(
             f"""
-            INSERT INTO marmut.PODCAST(id_konten, email_podcaster)
+            INSERT INTO PODCAST(id_konten, email_podcaster)
             VALUES(
                 '{id_konten}',
                 '{email}'  
@@ -219,7 +219,7 @@ def form_tambah_podcast(request, email):
         for g in genre:
             sql.query_add(
                 f"""
-                INSERT INTO marmut.GENRE(id_konten, genre)
+                INSERT INTO GENRE(id_konten, genre)
                 VALUES(
                     '{id_konten}',
                     '{g}'  
@@ -236,7 +236,7 @@ def form_tambah_podcast(request, email):
     
     genre = sql.query_result(f'''
     SELECT DISTINCT G.GENRE
-    FROM marmut.GENRE G
+    FROM GENRE G
     ''')
 
     for row in genre:
@@ -253,7 +253,7 @@ def form_tambah_podcast(request, email):
 
         sql.query_add(
             f"""
-            UPDATE marmut.KONTEN
+            UPDATE KONTEN
             SET judul='{judul}'
             WHERE id='{id}';
             );
@@ -262,14 +262,14 @@ def form_tambah_podcast(request, email):
 
         sql.query_add(
             f"""
-            DELETE FROM marmut.GENRE WHERE id_konten='{id}';
+            DELETE FROM GENRE WHERE id_konten='{id}';
             """
         )
 
         for g in genre:
             sql.query_add(
                 f"""
-                INSERT INTO marmut.GENRE(id_konten, genre)
+                INSERT INTO GENRE(id_konten, genre)
                 VALUES(
                     '{id}',
                     '{g}'  
@@ -283,7 +283,7 @@ def delete_episode(request, id_episode):
     print(id_episode)
     res = sql.query_result(f'''
     SELECT E.id_konten_podcast 
-    FROM marmut.EPISODE E
+    FROM EPISODE E
     where E.id_episode = '{id_episode}'
     ''')
 
@@ -292,7 +292,7 @@ def delete_episode(request, id_episode):
 
     sql.query_add(
             f"""
-            DELETE FROM marmut.EPISODE WHERE id_episode='{id_episode}';
+            DELETE FROM EPISODE WHERE id_episode='{id_episode}';
             """
         )
     
@@ -301,7 +301,7 @@ def delete_episode(request, id_episode):
 def delete_podcast(request, id):
     sql.query_add(
             f"""
-            DELETE FROM marmut.KONTEN WHERE id='{id}';
+            DELETE FROM KONTEN WHERE id='{id}';
             """
         )
     

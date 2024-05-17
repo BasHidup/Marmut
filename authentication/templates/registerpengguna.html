@@ -46,59 +46,66 @@
           Register Pengguna
         </div>
         <div class="card-body">
-          <form id="registrationForm">
+          <form id="registrationForm" method="POST">
             <div class="form-group">
               <label for="email">Email address</label>
-              <input type="email" class="form-control" id="email" placeholder="Enter email">
+              <input type="email" class="form-control" id="email" name="email" placeholder="Enter email">
             </div>
             <div class="form-group">
               <label for="password">Password</label>
-              <input type="password" class="form-control" id="password" placeholder="Password">
+              <input type="password" class="form-control" name="password" id="password" placeholder="Password">
             </div>
             <div class="form-group">
               <label for="nama">Nama</label>
-              <input type="text" class="form-control" id="nama" placeholder="Masukkan nama">
+              <input type="text" class="form-control" name="name" id="nama" placeholder="Masukkan nama">
             </div>
             <div class="form-group">
               <label for="gender">Gender</label>
-              <select class="form-control" id="gender">
+              <select class="form-control" id="gender" name="gender">
                 <option value="">Pilih gender</option>
-                <option value="Laki-laki">Laki-laki</option>
-                <option value="Perempuan">Perempuan</option>
+                <option value="L">Laki-laki</option>
+                <option value="P">Perempuan</option>
               </select>
             </div>
             <div class="form-group">
               <label for="tempat_lahir">Tempat lahir</label>
-              <input type="text" class="form-control" id="tempat_lahir" placeholder="Masukkan tempat lahir">
+              <input type="text" class="form-control" id="tempat_lahir" name="tempat_lahir" placeholder="Masukkan tempat lahir">
             </div>
             <div class="form-group">
               <label for="tanggal_lahir">Tanggal lahir</label>
-              <input type="date" class="form-control" id="tanggal_lahir">
+              <input type="date" class="form-control" id="tanggal_lahir" name="tanggal_lahir">
             </div>
             <div class="form-group">
               <label for="kota_asal">Kota asal</label>
-              <input type="text" class="form-control" id="kota_asal" placeholder="Masukkan kota asal">
+              <input type="text" class="form-control" id="kota_asal" name="kota_asal" placeholder="Masukkan kota asal">
             </div>
             <div class="form-group">
               <label>Role</label><br>
               <div class="form-check form-check-inline">
-                <input class="form-check-input role-checkbox" type="checkbox" id="podcaster" value="podcaster">
+                <input class="form-check-input role-checkbox" type="checkbox" id="podcaster" name="roles" value="podcaster">
                 <label class="form-check-label" for="podcaster">Podcaster</label>
               </div>
               <div class="form-check form-check-inline">
-                <input class="form-check-input role-checkbox" type="checkbox" id="artist" value="artist">
+                <input class="form-check-input role-checkbox" type="checkbox" id="artist" name="roles" value="artist">
                 <label class="form-check-label" for="artist">Artist</label>
               </div>
               <div class="form-check form-check-inline">
-                <input class="form-check-input role-checkbox" type="checkbox" id="songwriter" value="songwriter">
+                <input class="form-check-input role-checkbox" type="checkbox" id="songwriter" name="roles" value="songwriter">
                 <label class="form-check-label" for="songwriter">Songwriter</label>
               </div>
             </div>
             <button type="submit" class="btn btn-primary btn-block">Register</button>
           </form>
+          {% if messages %}
+            <ul>
+              {% for message in messages %}
+                <li>{{ message }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
         </div>
         <div class="card-footer">
-          Already have an account? <a href="#" style="color: #000000;">Login here</a>
+          Already have an account? <a href="/authentication/login/" style="color: #000000;">Login here</a>
         </div>
       </div>
     </div>

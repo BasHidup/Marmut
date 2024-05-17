@@ -28,6 +28,27 @@ def show_dashboard(request):
                     context['name'], context['email'], context['role'] = row[0], row[1], 'Label'
                     return render(request, 'dashboardlabel.html', context)
                 
+                
+            elif len(roles) > 2:
+                if 'artist' in roles and 'songwriter' in roles and 'podcaster' in roles:
+                    role_ini = 'Artist, Songwriter, Podcaster'
+                elif 'artist' in roles and 'songwriter' in roles:
+                    role_ini = 'Artist, Songwriter'
+                elif 'artist' in roles and 'podcaster' in roles:
+                    role_ini = 'Artist, Podcaster'
+                elif 'podcaster' in roles and 'songwriter' in roles:
+                    role_ini = 'Podcaster, Songwriter'
+
+                cursor.execute(f"SELECT nama, email, kota_asal, gender, tempat_lahir, tanggal_lahir FROM AKUN WHERE email = '{request.session['email']}'")
+                row = cursor.fetchone()
+                if row:
+                    if row[3] == 0:
+                        gender = "Laki-Laki"
+                    else:
+                        gender = "Perempuan"
+                    context['name'], context['email'], context['kota_asal'], context['gender'], context['tempat_lahir'], context['tanggal_lahir'], context['role'] = row[0], row[1], row[2], gender, row[4], row[5], role_ini
+                    return render(request, 'dashboardartist.html', context)
+                
             elif 'podcaster' in roles:
                 cursor.execute(f"SELECT nama, email, kota_asal, gender, tempat_lahir, tanggal_lahir FROM AKUN WHERE email = '{request.session['email']}'")
                 row = cursor.fetchone()
@@ -38,18 +59,7 @@ def show_dashboard(request):
                         gender = "Perempuan"
                     context['name'], context['email'], context['kota_asal'], context['gender'], context['tempat_lahir'], context['tanggal_lahir'], context['role'] = row[0], row[1], row[2], gender, row[4], row[5], 'Podcaster'
                     return render(request, 'dashboardpodcaster.html', context)
-                
-            elif 'artist' in roles and 'songwriter' in roles:
-                cursor.execute(f"SELECT nama, email, kota_asal, gender, tempat_lahir, tanggal_lahir FROM AKUN WHERE email = '{request.session['email']}'")
-                row = cursor.fetchone()
-                if row:
-                    if row[3] == 0:
-                        gender = "Laki-Laki"
-                    else:
-                        gender = "Perempuan"
-                    context['name'], context['email'], context['kota_asal'], context['gender'], context['tempat_lahir'], context['tanggal_lahir'], context['role'] = row[0], row[1], row[2], gender, row[4], row[5], 'Artist, Songwriter'
-                    return render(request, 'dashboardartist.html', context)
-                
+
             elif 'artist' in roles:
                 cursor.execute(f"SELECT nama, email, kota_asal, gender, tempat_lahir, tanggal_lahir FROM AKUN WHERE email = '{request.session['email']}'")
                 row = cursor.fetchone()
@@ -62,7 +72,7 @@ def show_dashboard(request):
                     return render(request, 'dashboardartist.html', context)
                 
             elif 'songwriter' in roles:
-                cursor.execute("SELECT nama, email, kota_asal, gender, tempat_lahir, tanggal_lahir FROM AKUN WHERE email = '{request.session['email']}'")
+                cursor.execute(f"SELECT nama, email, kota_asal, gender, tempat_lahir, tanggal_lahir FROM AKUN WHERE email = '{request.session['email']}'")
                 row = cursor.fetchone()
                 if row:
                     if row[3] == 0:
@@ -73,7 +83,7 @@ def show_dashboard(request):
                     return render(request, 'dashboardartist.html', context)
                 
             elif 'akun' in roles:
-                cursor.execute("SELECT nama, email, kota_asal, gender, tempat_lahir, tanggal_lahir FROM AKUN WHERE email = '{request.session['email']}'")
+                cursor.execute(f"SELECT nama, email, kota_asal, gender, tempat_lahir, tanggal_lahir FROM AKUN WHERE email = '{request.session['email']}'")
                 row = cursor.fetchone()
                 if row:
                     if row[3] == 0:

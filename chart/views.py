@@ -1,7 +1,19 @@
 from django.shortcuts import render
 import main.function as sql
+from django.shortcuts import redirect
+
+def has_logged_in(request):
+    print(request.session['email'])
+    print(request.session['roles'])
+    if request.session['email'] == 'not found' or request.session['roles'] == 'not found':
+        return False
+    
+    return True
 
 def home_chart(request):
+    if not has_logged_in(request):
+        return redirect('authentication:show_start')
+    
     data = {
             'chart':[],
         }
@@ -20,6 +32,9 @@ def home_chart(request):
     return render(request, 'home_chart.html', data)
 
 def detail_chart(request, id):
+    if not has_logged_in(request):
+        return redirect('authentication:show_start')
+    
     data = {
             'chart':[],
             'song':[]

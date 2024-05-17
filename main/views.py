@@ -21,7 +21,84 @@ def show_dashboard(request):
     if not has_logged_in(request):
         return redirect('authentication:show_start')
     
-    return render(request, 'dashboarduser.html')
+    context = {}
+    context['roles']=request.session['roles']
+    if 'roles' in request.session:
+        roles = request.session['roles']
+        with connection.cursor() as cursor:
+            if 'label' in roles:
+                cursor.execute(f"SELECT nama, email FROM LABEL WHERE email = '{request.session['email']}'")
+                row = cursor.fetchone()
+                if row:
+                    context['name'], context['email'], context['role'] = row[0], row[1], 'Label'
+                    return render(request, 'dashboardlabel.html', context)
+                
+                
+            elif len(roles) > 2:
+                if 'artist' in roles and 'songwriter' in roles and 'podcaster' in roles:
+                    role_ini = 'Artist, Songwriter, Podcaster'
+                elif 'artist' in roles and 'songwriter' in roles:
+                    role_ini = 'Artist, Songwriter'
+                elif 'artist' in roles and 'podcaster' in roles:
+                    role_ini = 'Artist, Podcaster'
+                elif 'podcaster' in roles and 'songwriter' in roles:
+                    role_ini = 'Podcaster, Songwriter'
+
+                cursor.execute(f"SELECT nama, email, kota_asal, gender, tempat_lahir, tanggal_lahir FROM AKUN WHERE email = '{request.session['email']}'")
+                row = cursor.fetchone()
+                if row:
+                    if row[3] == 0:
+                        gender = "Laki-Laki"
+                    else:
+                        gender = "Perempuan"
+                    context['name'], context['email'], context['kota_asal'], context['gender'], context['tempat_lahir'], context['tanggal_lahir'], context['role'] = row[0], row[1], row[2], gender, row[4], row[5], role_ini
+                    return render(request, 'dashboardartist.html', context)
+                
+            elif 'podcaster' in roles:
+                cursor.execute(f"SELECT nama, email, kota_asal, gender, tempat_lahir, tanggal_lahir FROM AKUN WHERE email = '{request.session['email']}'")
+                row = cursor.fetchone()
+                if row:
+                    if row[3] == 0:
+                        gender = "Laki-Laki"
+                    else:
+                        gender = "Perempuan"
+                    context['name'], context['email'], context['kota_asal'], context['gender'], context['tempat_lahir'], context['tanggal_lahir'], context['role'] = row[0], row[1], row[2], gender, row[4], row[5], 'Podcaster'
+                    return render(request, 'dashboardpodcaster.html', context)
+
+            elif 'artist' in roles:
+                cursor.execute(f"SELECT nama, email, kota_asal, gender, tempat_lahir, tanggal_lahir FROM AKUN WHERE email = '{request.session['email']}'")
+                row = cursor.fetchone()
+                if row:
+                    if row[3] == 0:
+                        gender = "Laki-Laki"
+                    else:
+                        gender = "Perempuan"
+                    context['name'], context['email'], context['kota_asal'], context['gender'], context['tempat_lahir'], context['tanggal_lahir'], context['role'] = row[0], row[1], row[2], gender, row[4], row[5], 'Artist'
+                    return render(request, 'dashboardartist.html', context)
+                
+            elif 'songwriter' in roles:
+                cursor.execute(f"SELECT nama, email, kota_asal, gender, tempat_lahir, tanggal_lahir FROM AKUN WHERE email = '{request.session['email']}'")
+                row = cursor.fetchone()
+                if row:
+                    if row[3] == 0:
+                        gender = "Laki-Laki"
+                    else:
+                        gender = "Perempuan"
+                    context['name'], context['email'], context['kota_asal'], context['gender'], context['tempat_lahir'], context['tanggal_lahir'], context['role'] = row[0], row[1], row[2], gender, row[4], row[5], 'Songwriter'
+                    return render(request, 'dashboardartist.html', context)
+                
+            elif 'akun' in roles:
+                cursor.execute(f"SELECT nama, email, kota_asal, gender, tempat_lahir, tanggal_lahir FROM AKUN WHERE email = '{request.session['email']}'")
+                row = cursor.fetchone()
+                if row:
+                    if row[3] == 0:
+                        gender = "Laki-Laki"
+                    else:
+                        gender = "Perempuan"
+                    context['name'], context['email'], context['kota_asal'], context['gender'], context['tempat_lahir'], context['tanggal_lahir'], context['role'] = row[0], row[1], row[2], gender, row[4], row[5], 'Pengguna Biasa'
+                    return render(request, 'dashboarduser.html', context)
+    
+    return HttpResponse("Role tidak ditemukan atau tidak valid.")
 
 def get_db_connection():
     # Get database credentials from environment variables
@@ -170,6 +247,7 @@ def show_royalties(request):
 
     context = {
         'royalties':royalties,
+        'roles':request.session['roles']
     }
 
     return render(request, 'cek_royalti.html', context)
@@ -196,6 +274,7 @@ def daftar_paket(request):
                     'harga': format_rupiah(paket[1]),
                 }
                 context['pakets'].append(p)
+            context['roles'] = request.session['roles']
     except Exception as e:
         messages.error(request, f'Terjadi kesalahan: {str(e)}')
     return render(request, 'daftar_paket.html', context)
@@ -239,6 +318,7 @@ def berlangganan_paket(request, jenis_paket):
             context = {
                 'jenis': paket[0],
                 'harga': format_rupiah(paket[1]),
+                'roles':request.session['roles']
             }
     except Exception as e:
         messages.error(request, f'Terjadi kesalahan: {str(e)}')
@@ -247,10 +327,16 @@ def berlangganan_paket(request, jenis_paket):
 
 
 def riwayat_transaksi(request):
+    if not has_logged_in(request):
+        return redirect('authentication:show_start')
+    
     transaksi = Transaksi.objects.filter(user=request.user)
-    return render(request, 'riwayat_transaksi.html', {'transaksi': transaksi})
+    return render(request, 'riwayat_transaksi.html', {'transaksi': transaksi, 'roles':request.session['roles']})
 
 def show_homepage(request):
+    if not has_logged_in(request):
+        return redirect('authentication:show_start')
+    
     conn = get_db_connection()
     cursor = conn.cursor()
     
@@ -289,6 +375,7 @@ def show_homepage(request):
         'songs': songs,
         'podcasts': podcasts,
         'playlists': playlists,
+        'roles':request.session['roles']
     })
 
 def format_rupiah(amount):

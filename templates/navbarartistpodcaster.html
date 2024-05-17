@@ -90,8 +90,14 @@
           <a class="nav-link" href="/paket/">Langganan Paket</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/albums/downloaded_songs">Kelola Downloaded Song</a>
-          </li>
+            <a class="nav-link" href="/albums/">Kelola Album & Songs</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'podcast:list_podcast' %}">Kelola Podcast</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/cek-royalti">Cek Royalti</a>
+        </li>
       </ul>
       <form class="form-inline my-2 my-lg-0">
         <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
@@ -104,7 +110,6 @@
       </ul>
     </div>
   </nav>
-
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>

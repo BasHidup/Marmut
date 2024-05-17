@@ -8,7 +8,7 @@ def home_chart(request):
 
     chart = sql.query_result(f'''
     SELECT c.tipe, c.id_playlist
-    FROM marmut.CHART C
+    FROM CHART C
     ''')
 
     for row in chart:
@@ -27,7 +27,7 @@ def detail_chart(request, id):
     
     chart = sql.query_result(f'''
     SELECT c.tipe
-    FROM marmut.CHART C
+    FROM CHART C
     WHERE id_playlist = '{id}'
     ''')
 

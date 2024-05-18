@@ -251,7 +251,11 @@ def create_album(request):
         } for sw in sw_result
     ]
 
-    query_genres = "SELECT DISTINCT genre FROM GENRE"
+    query_genres = """
+        SELECT DISTINCT genre
+        FROM GENRE
+        JOIN SONG ON GENRE.id_konten = SONG.id_konten
+    """
     cursor.execute(query_genres)
     genres_result = cursor.fetchall()
     genres = [{'jenis': genre[0]} for genre in genres_result]
@@ -533,7 +537,11 @@ def create_song(request, id_album):
         } for sw in sw_result
     ]
 
-    query_genres = "SELECT DISTINCT genre FROM GENRE"
+    query_genres = """
+        SELECT DISTINCT genre
+        FROM GENRE
+        JOIN SONG ON GENRE.id_konten = SONG.id_konten
+    """
     cursor.execute(query_genres)
     genres_result = cursor.fetchall()
     genres = [{'jenis': genre[0]} for genre in genres_result]

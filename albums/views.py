@@ -711,8 +711,21 @@ def delete_downloaded_song(request, downloaded_song_id):
         try:
             with connection.cursor() as cursor:
                 cursor.execute('SET search_path TO public')
+                
+                query_judul = f"""
+                SELECT KONTEN.judul
+                FROM DOWNLOADED_SONG
+                JOIN SONG ON DOWNLOADED_SONG.id_song = SONG.id_konten
+                JOIN KONTEN ON SONG.id_konten = KONTEN.id
+                WHERE DOWNLOADED_SONG.id_song = '{downloaded_song_id}';
+                """
+                cursor.execute(query_judul)
+                judul = cursor.fetchone()[0]
+
                 cursor.execute(query)
                 connection.commit()
+
+                messages.success(request, f"Berhasil menghapus Lagu dengan judul '{judul}' dari daftar unduhan!")
         except Exception as e:
             messages.error(request, f'Terjadi kesalahan: {str(e)}')
         return redirect('albums:downloaded_songs')

@@ -29,6 +29,8 @@ def home_chart(request):
             "id": row[1]
         })
 
+    data['roles'] = request.session['roles']
+
     return render(request, 'home_chart.html', data)
 
 def detail_chart(request, id):
@@ -70,5 +72,7 @@ def detail_chart(request, id):
             "id_song": row[4]
 
         })
+
+    data['roles'] = request.session['roles']
     
     return render(request, 'detail_chart.html', data)

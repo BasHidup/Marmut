@@ -12,7 +12,6 @@ urlpatterns = [
     path('<str:id_album>/songs/', show_songs, name='show_songs'),
     path('<str:id_album>/create-song/', create_song, name='create_song'),
     path('song-detail/<str:id_song>/', show_song_detail, name='show_song_detail'),
-    # path('edit-song/<str:id_song>/', edit_song, name='edit_song'),
     path('songs/', downloaded_songs, name='downloaded_songs'),
     path('songs/delete/<int:song_id>/', delete_downloaded_song, name='delete_song'),
     path('playlists/', manage_playlists, name='manage_playlists'),

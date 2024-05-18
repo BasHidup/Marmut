@@ -303,7 +303,25 @@ def delete_album(request, id_album):
                     DELETE FROM GENRE WHERE id_konten = %s
                 """
                 cursor.execute(delete_genre, [id_song])
-                
+
+                # delete from playlist song
+                delete_pl_song = """
+                    DELETE FROM PLAYLIST_SONG WHERE id_song = %s
+                """
+                cursor.execute(delete_pl_song, [id_song])
+
+                # delete from playlist song
+                delete_akun_play_song = """
+                    DELETE FROM AKUN_PLAY_SONG WHERE id_song = %s
+                """
+                cursor.execute(delete_akun_play_song, [id_song])
+
+                # delete from downloaded song
+                delete_dl_song = """
+                    DELETE FROM DOWNLOADED_SONG WHERE id_song = %s
+                """
+                cursor.execute(delete_dl_song, [id_song])
+        
                 # Delete from SONG
                 delete_song = """
                     DELETE FROM SONG WHERE id_konten = %s
@@ -638,6 +656,24 @@ def delete_song(request, id_album, id_song):
             DELETE FROM GENRE WHERE id_konten = %s
         """
         cursor.execute(delete_genre, [id_song])
+
+        # delete from playlist song
+        delete_pl_song = """
+            DELETE FROM PLAYLIST_SONG WHERE id_song = %s
+        """
+        cursor.execute(delete_pl_song, [id_song])
+
+        # delete from playlist song
+        delete_akun_play_song = """
+            DELETE FROM AKUN_PLAY_SONG WHERE id_song = %s
+        """
+        cursor.execute(delete_akun_play_song, [id_song])
+
+        # delete from downloaded song
+        delete_dl_song = """
+            DELETE FROM DOWNLOADED_SONG WHERE id_song = %s
+        """
+        cursor.execute(delete_dl_song, [id_song])
         
         # Delete from SONG
         delete_song = """

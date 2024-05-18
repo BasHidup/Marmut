@@ -286,53 +286,7 @@ def delete_album(request, id_album):
             song_ids = cursor.fetchall()
             
             for id_song in song_ids:
-                # Delete from ROYALTI
-                delete_royalty = """
-                    DELETE FROM ROYALTI WHERE id_song = %s
-                """
-                cursor.execute(delete_royalty, [id_song])
-
-                # Delete from SONGWRITER_WRITE_SONG
-                delete_songwriter_write_song = """
-                    DELETE FROM SONGWRITER_WRITE_SONG WHERE id_song = %s
-                """
-                cursor.execute(delete_songwriter_write_song, [id_song])
-                
-                # Delete from GENRE
-                delete_genre = """
-                    DELETE FROM GENRE WHERE id_konten = %s
-                """
-                cursor.execute(delete_genre, [id_song])
-
-                # delete from playlist song
-                delete_pl_song = """
-                    DELETE FROM PLAYLIST_SONG WHERE id_song = %s
-                """
-                cursor.execute(delete_pl_song, [id_song])
-
-                # delete from playlist song
-                delete_akun_play_song = """
-                    DELETE FROM AKUN_PLAY_SONG WHERE id_song = %s
-                """
-                cursor.execute(delete_akun_play_song, [id_song])
-
-                # delete from downloaded song
-                delete_dl_song = """
-                    DELETE FROM DOWNLOADED_SONG WHERE id_song = %s
-                """
-                cursor.execute(delete_dl_song, [id_song])
-        
-                # Delete from SONG
-                delete_song = """
-                    DELETE FROM SONG WHERE id_konten = %s
-                """
-                cursor.execute(delete_song, [id_song])
-                
-                # Delete from KONTEN
-                delete_konten = """
-                    DELETE FROM KONTEN WHERE id = %s
-                """
-                cursor.execute(delete_konten, [id_song])
+                query_hapus_song(id_song)
             
             # Finally, delete the album
             delete_album_query = """
@@ -638,6 +592,11 @@ def delete_song(request, id_album, id_song):
     if not has_logged_in(request):
         return redirect('authentication:show_start')
     
+    query_hapus_song(id_song)
+
+    return redirect('albums:show_songs', id_album=id_album) 
+
+def query_hapus_song(id_song):
     with connection.cursor() as cursor:
         # Delete from ROYALTI
         delete_royalty = """
@@ -686,8 +645,6 @@ def delete_song(request, id_album, id_song):
             DELETE FROM KONTEN WHERE id = %s
         """
         cursor.execute(delete_konten, [id_song])
-
-    return redirect('albums:show_songs', id_album=id_album) 
 
 def downloaded_songs(request):
     if not has_logged_in(request):

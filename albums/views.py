@@ -1122,8 +1122,6 @@ def download_song(request, song_id):
         else:
             cursor.execute("INSERT INTO DOWNLOADED_SONG (id_song, email_downloader) VALUES (%s, %s)", (song_id, email))
             conn.commit()
-            cursor.execute("UPDATE SONG SET total_download = total_download + 1 WHERE id_konten = %s", (song_id,))
-            conn.commit()
             messages.success(request, 'Lagu berhasil didownload.')
     except Exception as e:
         conn.rollback()

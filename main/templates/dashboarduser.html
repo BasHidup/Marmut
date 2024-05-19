@@ -1,10 +1,6 @@
 
 {% block content %}
-    {% if is_premium %}
-        {% include "navbarpremium.html" %}
-    {% else %}
-        {% include "navbaruser.html" %}
-    {% endif %}
+{% include "navbar.html" %}
 
     <html lang="en">
     <head>
@@ -42,7 +38,11 @@
     </head>
     <body>
       <div class="container">
+        {% if is_premium %}
+        <h2 class="text-center">Dashboard - Pengguna Premium</h2>
+        {% else %}
         <h2 class="text-center">Dashboard - Pengguna Biasa</h2>
+        {% endif %}
         <div class="card">
           <div class="card-header">
             Informasi Pengguna

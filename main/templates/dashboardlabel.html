@@ -1,27 +1,5 @@
 {% block content %}
-    {% if 'label' in roles %}
-        {% include "navbarlabel.html" %}
-    {% elif 'artist' in roles and 'podcaster' in roles %}
-        {% include "navbarartistpodcaster.html" %}
-    {% elif 'songwriter' in roles and 'podcaster' in roles %}
-        {% include "navbarartistpodcaster.html" %}
-    {% elif 'artist' in roles %}
-        {% include "navbarartist.html" %}
-    {% elif 'songwriter' in roles %}
-        {% include "navbarsongwriter.html" %}
-    {% elif 'podcaster' in roles %}
-        {% include "navbarpodcaster.html" %}
-    {% elif is_premium %}
-        {% include "navbarpremium.html" %}
-    {% elif 'artist' in roles and is_premium %}
-        {% include "navbarpremiumartist.html" %}
-    {% elif 'songwriter' in roles and is_premium %}
-        {% include "navbarpremiumsongwriter.html" %}
-    {% elif 'podcaster' in roles and is_premium %}
-        {% include "navbarpremiumpodcaster.html" %}
-    {% else %}
-        {% include "navbaruser.html" %}
-    {% endif %}
+{% include "navbar.html" %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -59,7 +37,7 @@
 </head>
 <body>
   <div class="container">
-    <h2 class="text-center">Dashboard - Label</h2>
+    <h2 class="text-center">Dashboard - {{ role }}</h2>
     <div class="card">
       <div class="card-header">
         Informasi Pengguna
@@ -77,7 +55,7 @@
             </tr>
             <tr>
               <th scope="row">Role</th>
-              <td>Label</td>
+              <td>{{ role }}</td>
             </tr>
           </tbody>
         </table>

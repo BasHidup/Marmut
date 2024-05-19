@@ -1,27 +1,5 @@
 {% block content %}
-    {% if 'label' in roles %}
-        {% include "navbarlabel.html" %}
-    {% elif 'artist' in roles and 'podcaster' in roles %}
-        {% include "navbarartistpodcaster.html" %}
-    {% elif 'songwriter' in roles and 'podcaster' in roles %}
-        {% include "navbarartistpodcaster.html" %}
-    {% elif 'artist' in roles %}
-        {% include "navbarartist.html" %}
-    {% elif 'songwriter' in roles %}
-        {% include "navbarsongwriter.html" %}
-    {% elif 'podcaster' in roles %}
-        {% include "navbarpodcaster.html" %}
-    {% elif is_premium %}
-        {% include "navbarpremium.html" %}
-    {% elif 'artist' in roles and is_premium %}
-        {% include "navbarpremiumartist.html" %}
-    {% elif 'songwriter' in roles and is_premium %}
-        {% include "navbarpremiumsongwriter.html" %}
-    {% elif 'podcaster' in roles and is_premium %}
-        {% include "navbarpremiumpodcaster.html" %}
-    {% else %}
-        {% include "navbaruser.html" %}
-    {% endif %}
+{% include "navbar.html" %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -86,7 +64,6 @@
         <h4 class="text-center">Chart Detail</h4>
         <div class="mb-4"></div>
 
-        <img src="marmut.png" alt="Podcast Cover" class="podcast-cover mb-3">
         {% for c in chart %}
         <h3>{{ c.tipe }}</h3>
         {% endfor %}

@@ -95,7 +95,7 @@
                               <td>{{ song.nama_penyanyi }}</td>
                               <td>{{ song.durasi_lagu }} Menit</td>
                               <td>
-                                  <a href="#" class="btn btn-primary">Lihat</a>
+                                <a href="{% url 'albums:show_song_detail' downloaded_song.id %}" class="btn btn-primary">Lihat</a>
                                   <a href="{% url 'albums:play_song' song.id_lagu %}" class="btn btn-secondary">Play</a>
                                   <a href="{% url 'albums:delete_song_from_playlist' playlist.id song.id_lagu %}" class="btn btn-danger">Hapus</a>
                           </tr>

@@ -1,5 +1,27 @@
 {% block content %}
-{% include 'navbaruser.html' %}
+    {% if 'label' in roles %}
+        {% include "navbarlabel.html" %}
+    {% elif 'artist' in roles and 'podcaster' in roles %}
+        {% include "navbarartistpodcaster.html" %}
+    {% elif 'songwriter' in roles and 'podcaster' in roles %}
+        {% include "navbarartistpodcaster.html" %}
+    {% elif 'artist' in roles %}
+        {% include "navbarartist.html" %}
+    {% elif 'songwriter' in roles %}
+        {% include "navbarsongwriter.html" %}
+    {% elif 'podcaster' in roles %}
+        {% include "navbarpodcaster.html" %}
+    {% elif is_premium %}
+        {% include "navbarpremium.html" %}
+    {% elif 'artist' in roles and is_premium %}
+        {% include "navbarpremiumartist.html" %}
+    {% elif 'songwriter' in roles and is_premium %}
+        {% include "navbarpremiumsongwriter.html" %}
+    {% elif 'podcaster' in roles and is_premium %}
+        {% include "navbarpremiumpodcaster.html" %}
+    {% else %}
+        {% include "navbaruser.html" %}
+    {% endif %}
 <head>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">

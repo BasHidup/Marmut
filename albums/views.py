@@ -85,6 +85,7 @@ def show_albums(request):
     context = {
         'albums':albums,
         'label_acc':label_acc,
+        'roles':request.session['roles']
     }
 
     return render(request, "list_albums.html", context)
@@ -250,7 +251,11 @@ def create_album(request):
         } for sw in sw_result
     ]
 
-    query_genres = "SELECT DISTINCT genre FROM GENRE"
+    query_genres = """
+        SELECT DISTINCT genre
+        FROM GENRE
+        JOIN SONG ON GENRE.id_konten = SONG.id_konten
+    """
     cursor.execute(query_genres)
     genres_result = cursor.fetchall()
     genres = [{'jenis': genre[0]} for genre in genres_result]
@@ -262,6 +267,7 @@ def create_album(request):
         'songwriters':songwriter,
         'genres':genres,
         'labels':labels,
+        'roles':request.session['roles']
     }
 
     return render(request, "create_album.html", context)
@@ -280,35 +286,7 @@ def delete_album(request, id_album):
             song_ids = cursor.fetchall()
             
             for id_song in song_ids:
-                # Delete from ROYALTI
-                delete_royalty = """
-                    DELETE FROM ROYALTI WHERE id_song = %s
-                """
-                cursor.execute(delete_royalty, [id_song])
-
-                # Delete from SONGWRITER_WRITE_SONG
-                delete_songwriter_write_song = """
-                    DELETE FROM SONGWRITER_WRITE_SONG WHERE id_song = %s
-                """
-                cursor.execute(delete_songwriter_write_song, [id_song])
-                
-                # Delete from GENRE
-                delete_genre = """
-                    DELETE FROM GENRE WHERE id_konten = %s
-                """
-                cursor.execute(delete_genre, [id_song])
-                
-                # Delete from SONG
-                delete_song = """
-                    DELETE FROM SONG WHERE id_konten = %s
-                """
-                cursor.execute(delete_song, [id_song])
-                
-                # Delete from KONTEN
-                delete_konten = """
-                    DELETE FROM KONTEN WHERE id = %s
-                """
-                cursor.execute(delete_konten, [id_song])
+                query_hapus_song(id_song)
             
             # Finally, delete the album
             delete_album_query = """
@@ -391,6 +369,7 @@ def show_songs(request, id_album):
         'id_album':id_album_ini,
         'songs':songs,
         'label_acc':label_acc,
+        'roles':request.session['roles']
     }
 
     return render(request, "list_songs.html", context)
@@ -530,7 +509,11 @@ def create_song(request, id_album):
         } for sw in sw_result
     ]
 
-    query_genres = "SELECT DISTINCT genre FROM GENRE"
+    query_genres = """
+        SELECT DISTINCT genre
+        FROM GENRE
+        JOIN SONG ON GENRE.id_konten = SONG.id_konten
+    """
     cursor.execute(query_genres)
     genres_result = cursor.fetchall()
     genres = [{'jenis': genre[0]} for genre in genres_result]
@@ -543,6 +526,7 @@ def create_song(request, id_album):
         'artists':artists,
         'songwriters':songwriter,
         'genres':genres,
+        'roles':request.session['roles']
     }
 
     return render(request, 'create_song.html', context)
@@ -599,6 +583,7 @@ def show_song_detail(request, id_song):
     context = {
         'song':song,
         'label_acc':label_acc,
+        'roles':request.session['roles']
     }
 
     return render(request, 'song_detail.html', context)
@@ -607,6 +592,11 @@ def delete_song(request, id_album, id_song):
     if not has_logged_in(request):
         return redirect('authentication:show_start')
     
+    query_hapus_song(id_song)
+
+    return redirect('albums:show_songs', id_album=id_album) 
+
+def query_hapus_song(id_song):
     with connection.cursor() as cursor:
         # Delete from ROYALTI
         delete_royalty = """
@@ -625,6 +615,24 @@ def delete_song(request, id_album, id_song):
             DELETE FROM GENRE WHERE id_konten = %s
         """
         cursor.execute(delete_genre, [id_song])
+
+        # delete from playlist song
+        delete_pl_song = """
+            DELETE FROM PLAYLIST_SONG WHERE id_song = %s
+        """
+        cursor.execute(delete_pl_song, [id_song])
+
+        # delete from playlist song
+        delete_akun_play_song = """
+            DELETE FROM AKUN_PLAY_SONG WHERE id_song = %s
+        """
+        cursor.execute(delete_akun_play_song, [id_song])
+
+        # delete from downloaded song
+        delete_dl_song = """
+            DELETE FROM DOWNLOADED_SONG WHERE id_song = %s
+        """
+        cursor.execute(delete_dl_song, [id_song])
         
         # Delete from SONG
         delete_song = """
@@ -638,19 +646,83 @@ def delete_song(request, id_album, id_song):
         """
         cursor.execute(delete_konten, [id_song])
 
-    return redirect('albums:show_songs', id_album=id_album) 
-
 def downloaded_songs(request):
-    songs = DownloadedSong.objects.filter(user=request.user)  
-    return render(request, 'downloaded_songs.html', {'songs': songs})
+    if not has_logged_in(request):
+        return redirect('authentication:show_start')
+    
+    context = {
+        'downloaded_songs': []
+    }
+    email_downloader = request.session['email']
 
-def delete_downloaded_song(request, song_id):
-    song = get_object_or_404(DownloadedSong, id=song_id, user=request.user)
+    query = f"""
+    SELECT 
+        ds.id_song,
+        k.judul AS judul_lagu,
+        a.nama AS nama_artist
+    FROM 
+        DOWNLOADED_SONG ds
+    JOIN 
+        SONG s ON ds.id_song = s.id_konten
+    JOIN 
+        KONTEN k ON s.id_konten = k.id
+    JOIN 
+        ARTIST ar ON s.id_artist = ar.id
+    JOIN 
+        AKUN a ON ar.email_akun = a.email
+    WHERE 
+        ds.email_downloader = '{email_downloader}';
+    """
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute('SET search_path TO public')
+            
+            cursor.execute(query)
+            downloaded_songs = cursor.fetchall()
+            
+            for song in downloaded_songs:
+                context['downloaded_songs'].append({
+                    'id': song[0],
+                    'title': song[1],
+                    'artist': song[2]
+                })
+            context['roles']=request.session['roles']
+    except Exception as e:
+        messages.error(request, f'Terjadi kesalahan: {str(e)}')
+    return render(request, 'downloaded_songs.html', context)
+
+def delete_downloaded_song(request, downloaded_song_id):
+    if not has_logged_in(request):
+        return redirect('authentication:show_start')
+    
     if request.method == 'POST':
-        song_title = song.title  # Menyimpan judul untuk message
-        song.delete()
-        messages.success(request, f'Berhasil menghapus Lagu dengan judul "{song_title}" dari daftar unduhan!')
-        return redirect('downloaded_songs')
+        email_downloader = request.session['email']
+        query = f"""
+        DELETE FROM DOWNLOADED_SONG
+        WHERE id_song = '{downloaded_song_id}' AND email_downloader = '{email_downloader}';
+        """
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute('SET search_path TO public')
+                
+                query_judul = f"""
+                SELECT KONTEN.judul
+                FROM DOWNLOADED_SONG
+                JOIN SONG ON DOWNLOADED_SONG.id_song = SONG.id_konten
+                JOIN KONTEN ON SONG.id_konten = KONTEN.id
+                WHERE DOWNLOADED_SONG.id_song = '{downloaded_song_id}';
+                """
+                cursor.execute(query_judul)
+                judul = cursor.fetchone()[0]
+
+                cursor.execute(query)
+                connection.commit()
+
+                messages.success(request, f"Berhasil menghapus Lagu dengan judul '{judul}' dari daftar unduhan!")
+        except Exception as e:
+            messages.error(request, f'Terjadi kesalahan: {str(e)}')
+        return redirect('albums:downloaded_songs')
+
 
 @csrf_exempt
 def manage_playlists(request):
@@ -680,7 +752,7 @@ def manage_playlists(request):
             messages.error(request, f'Terjadi kesalahan: {str(e)}')
             playlists = []
 
-        return render(request, 'manageplaylist.html', {'playlists': playlists})
+        return render(request, 'manageplaylist.html', {'playlists': playlists, 'roles':request.session['roles']})
     else:
         # Jika pengguna belum masuk, arahkan ke halaman login
         return redirect('authentication:login_view')
@@ -758,7 +830,7 @@ def playlist_detail(request, playlist_id):
         songs = []
     cursor.close()
     conn.close()
-    return render(request, 'playlistdetail.html', {'playlist': playlist, 'songs': songs})
+    return render(request, 'playlistdetail.html', {'playlist': playlist, 'songs': songs, 'roles':request.session['roles']})
 
 @csrf_exempt
 def edit_playlist(request, playlist_id):
@@ -778,7 +850,7 @@ def edit_playlist(request, playlist_id):
     playlist = cursor.fetchone()
     cursor.close()
     conn.close()
-    return render(request, 'editplaylist.html', {'playlist': playlist})
+    return render(request, 'editplaylist.html', {'playlist': playlist, 'roles':request.session['roles']})
 
 @csrf_exempt
 def delete_playlist(request, playlist_id):
@@ -828,7 +900,7 @@ def add_song_to_playlist(request, playlist_id):
     songs = [{'id_lagu': row[0], 'judul_lagu': row[1], 'nama_penyanyi': row[2]} for row in songsrow]
     cursor.close()
     conn.close()
-    return render(request, 'addsongtoplaylist.html', {'songs': songs})
+    return render(request, 'addsongtoplaylist.html', {'songs': songs, 'roles':request.session['roles']})
 
 @csrf_exempt
 def play_song(request, song_id):
@@ -905,7 +977,7 @@ def play_song(request, song_id):
         songs = []
     cursor.close()
     conn.close()
-    return render(request, 'playsong.html', {'songs': songs , 'is_premium' : is_premium})
+    return render(request, 'playsong.html', {'songs': songs , 'is_premium' : is_premium, 'roles':request.session['roles']})
 
 def is_user_premium(email):
     conn = get_db_connection()
@@ -1001,7 +1073,7 @@ def add_song_to_playlist_with_option(request, song_id):
     cursor.close()
     conn.close()
     
-    return render(request, 'addsongtoplaylist2.html', {'playlists': playlists, 'songs': songs})
+    return render(request, 'addsongtoplaylist2.html', {'playlists': playlists, 'songs': songs, 'roles':request.session['roles']})
 
 @csrf_exempt
 def download_song(request, song_id):
@@ -1090,7 +1162,7 @@ def play_user_playlist(request, playlist_id):
         songs = []
     cursor.close()
     conn.close()
-    return render(request, 'playuserplaylist.html', {'playlist': playlist, 'songs': songs})
+    return render(request, 'playuserplaylist.html', {'playlist': playlist, 'songs': songs, 'roles':request.session['roles']})
 
 def shuffle_play(request, id_user_playlist):
     conn = get_db_connection()

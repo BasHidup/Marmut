@@ -1,6 +1,19 @@
 {% block content %}
-
-{% include "navbaruser.html" %}
+    {% if 'label' in roles %}
+        {% include "navbarlabel.html" %}
+    {% elif 'artist' in roles and 'podcaster' in roles %}
+        {% include "navbarartistpodcaster.html" %}
+    {% elif 'songwriter' in roles and 'podcaster' in roles %}
+        {% include "navbarartistpodcaster.html" %}
+    {% elif 'artist' in roles %}
+        {% include "navbarartist.html" %}
+    {% elif 'songwriter' in roles %}
+        {% include "navbarsongwriter.html" %}
+    {% elif 'podcaster' in roles %}
+        {% include "navbarpodcaster.html" %}
+    {% else %}
+        {% include "navbaruser.html" %}
+    {% endif %}
 <head>
     <title>Create New Album</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">

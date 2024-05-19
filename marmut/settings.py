@@ -121,6 +121,13 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+CORS_ALLOWED_ORIGINS = [
+    'https://marmut-production-0fae.up.railway.app/',
+    # Tambahkan origin lain jika perlu
+]
+
+CSRF_TRUSTED_ORIGINS = ['https://marmut-production-0fae.up.railway.app/']
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/

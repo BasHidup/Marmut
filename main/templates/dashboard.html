@@ -1,0 +1,172 @@
+{% block content %}
+{% include "navbar.html" %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+          background-color: #E9DDC7; 
+          color: #000000;
+        }
+        .container {
+          margin-top: 5%;
+        }
+        .card {
+          background-color: #E9DDC7;
+          border-color: #816454;
+          color: #000000;
+        }
+        .card-header {
+          background-color: #816454;
+          color: #FFFFFF; 
+        }
+        .btn-primary {
+          background-color: #816454;
+          border-color: #816454; 
+        }
+        .btn-primary:hover {
+          background-color: #F5C98C; 
+          border-color: #816454;  
+          color: #000000;
+        }
+      </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2>Dashboard</h2>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    {% if role != "Label" %}
+                    <tr>
+                      <th>Nama</th>
+                      <td>{{ name }}</td>
+                  </tr>
+                  <tr>
+                      <th>Email</th>
+                      <td>{{ email }}</td>
+                  </tr>
+                    {% if is_premium %}
+                    <tr>
+                        <th>Status Langganan</th>
+                        <td>Premium</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <th>Status Langganan</th>
+                        <td>Gratis</td>
+                    </tr>
+                    {% endif %}
+                    <tr>
+                        <th>Kota Asal</th>
+                        <td>{{ kota_asal }}</td>
+                    </tr>
+                    <tr>
+                        <th>Gender</th>
+                        <td>{{ gender }}</td>
+                    </tr>
+                    <tr>
+                        <th>Tempat Lahir</th>
+                        <td>{{ tempat_lahir }}</td>
+                    </tr>
+                    <tr>
+                        <th>Tanggal Lahir</th>
+                        <td>{{ tanggal_lahir }}</td>
+                    </tr>
+                    <tr>
+                        <th>Role</th>
+                        <td>{{ role }}</td>
+                    </tr>
+                    {% endif %}
+                </table>
+
+                {% if role == "Pengguna Biasa" %}
+                    <h3>Playlist</h3>
+                    {% if playlists %}
+                        <ul>
+                            {% for playlist in playlists %}
+                                <li>{{ playlist }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>Belum Memiliki Playlist</p>
+                    {% endif %}
+                {% endif %}
+
+                {% if 'Artist' in role or 'Songwriter' in role %}
+                    <h3>Lagu</h3>
+                    {% if songs %}
+                        <ul>
+                            {% for song in songs %}
+                                <li>{{ song }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>Belum Memiliki Lagu</p>
+                    {% endif %}
+                {% endif %}
+
+                {% if 'Songwriter' in role %}
+                    <h3>Lagu yang Ditulis</h3>
+                    {% if written_songs %}
+                        <ul>
+                            {% for song in written_songs %}
+                                <li>{{ song }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>Belum Menulis Lagu</p>
+                    {% endif %}
+                {% endif %}
+
+                {% if 'Podcaster' in role %}
+                    <h3>Podcast</h3>
+                    {% if podcasts %}
+                        <ul>
+                            {% for podcast in podcasts %}
+                                <li>{{ podcast }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>Belum Memiliki Podcast</p>
+                    {% endif %}
+                {% endif %}
+
+                {% if role == "Label" %}
+                    <table class="table">
+                        <tr>
+                            <th>Nama</th>
+                            <td>{{ name }}</td>
+                        </tr>
+                        <tr>
+                            <th>Kontak</th>
+                            <td>{{ email }}</td>
+                        </tr>
+                        <tr>
+                            <th>Role</th>
+                            <td>{{ role }}</td>
+                        </tr>
+                    </table>
+                    <h3>Album</h3>
+                    {% if albums %}
+                        <ul>
+                            {% for album in albums %}
+                                <li>{{ album }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>Belum Memproduksi Album</p>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+{% endblock content %}

@@ -84,7 +84,7 @@
         <p class="episode-info">Oleh: {{ s.nama }} </p>
         <p class="episode-info">Tanggal Rilis: {{ s.tanggal_rilis }}</p>
         <p class="episode-info">Total Plays: {{ s.total_play }}</p>
-        <a href="#" class="btn btn-primary">Lihat</a>
+        <a href="{% url 'albums:play_song' s.id_song %}" class="btn btn-primary">Lihat</a>
         <hr>
         <div class="mb-4"></div>
         {% endfor %}

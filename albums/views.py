@@ -94,6 +94,7 @@ def show_albums(request):
 
     return render(request, "list_albums.html", context)
 
+@csrf_exempt
 def create_album(request):
     if not has_logged_in(request):
         return redirect('authentication:show_start')
@@ -386,6 +387,7 @@ def show_songs(request, id_album):
 
     return render(request, "list_songs.html", context)
 
+@csrf_exempt
 def create_song(request, id_album):
     if not has_logged_in(request):
         return redirect('authentication:show_start')

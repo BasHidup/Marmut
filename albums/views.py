@@ -81,11 +81,15 @@ def show_albums(request):
     
     if (label_acc):
         albums = [album for album in albums if album['label'] == label_acc]
+        
+    email = request.session.get('email')
+    is_premium = is_user_premium(email)
 
     context = {
         'albums':albums,
         'label_acc':label_acc,
-        'roles':request.session['roles']
+        'roles':request.session['roles'],
+        'is_premium' : is_premium,
     }
 
     return render(request, "list_albums.html", context)
@@ -259,6 +263,9 @@ def create_album(request):
     cursor.execute(query_genres)
     genres_result = cursor.fetchall()
     genres = [{'jenis': genre[0]} for genre in genres_result]
+    
+    email = request.session.get('email')
+    is_premium = is_user_premium(email)
 
     context = {
         'akun_ar':akun_ar,
@@ -267,7 +274,8 @@ def create_album(request):
         'songwriters':songwriter,
         'genres':genres,
         'labels':labels,
-        'roles':request.session['roles']
+        'roles':request.session['roles'],
+        'is_premium' : is_premium,
     }
 
     return render(request, "create_album.html", context)
@@ -363,13 +371,17 @@ def show_songs(request, id_album):
 
     print('----------------------------------------')
     # print(songs)
+    
+    email = request.session.get('email')
+    is_premium = is_user_premium(email)
 
     context = {
         'album_name':album_name,
         'id_album':id_album_ini,
         'songs':songs,
         'label_acc':label_acc,
-        'roles':request.session['roles']
+        'roles':request.session['roles'],
+        'is_premium' : is_premium,
     }
 
     return render(request, "list_songs.html", context)
@@ -517,6 +529,8 @@ def create_song(request, id_album):
     cursor.execute(query_genres)
     genres_result = cursor.fetchall()
     genres = [{'jenis': genre[0]} for genre in genres_result]
+    email = request.session.get('email')
+    is_premium = is_user_premium(email)
 
     context = {
         'akun_ar':akun_ar,
@@ -526,7 +540,8 @@ def create_song(request, id_album):
         'artists':artists,
         'songwriters':songwriter,
         'genres':genres,
-        'roles':request.session['roles']
+        'roles':request.session['roles'],
+        'is_premium' : is_premium,
     }
 
     return render(request, 'create_song.html', context)
@@ -578,12 +593,15 @@ def show_song_detail(request, id_song):
         'id_album': song_result[8]
     }
     # print(song)
+    email = request.session.get('email')
+    is_premium = is_user_premium(email)
     
     label_acc = None
     context = {
         'song':song,
         'label_acc':label_acc,
-        'roles':request.session['roles']
+        'roles':request.session['roles'],
+        'is_premium' : is_premium,
     }
 
     return render(request, 'song_detail.html', context)
@@ -649,8 +667,11 @@ def query_hapus_song(id_song):
 def downloaded_songs(request):
     if not has_logged_in(request):
         return redirect('authentication:show_start')
+    email = request.session.get('email')
+    is_premium = is_user_premium(email)
     
     context = {
+        'is_premium' : is_premium,
         'downloaded_songs': []
     }
     email_downloader = request.session['email']
@@ -751,8 +772,11 @@ def manage_playlists(request):
         except Exception as e:
             messages.error(request, f'Terjadi kesalahan: {str(e)}')
             playlists = []
+            
+        email = request.session.get('email')
+        is_premium = is_user_premium(email)
 
-        return render(request, 'manageplaylist.html', {'playlists': playlists, 'roles':request.session['roles']})
+        return render(request, 'manageplaylist.html', {'playlists': playlists, 'is_premium' : is_premium, 'roles':request.session['roles']})
     else:
         # Jika pengguna belum masuk, arahkan ke halaman login
         return redirect('authentication:login_view')
@@ -781,7 +805,9 @@ def add_playlist(request):
         cursor.close()
         conn.close()
         return redirect('albums:manage_playlists')
-    return render(request, 'addplaylist.html')
+    email = request.session.get('email')
+    is_premium = is_user_premium(email)
+    return render(request,  'addplaylist.html' ,{'is_premium' : is_premium,})
 
 def playlist_detail(request, playlist_id):
     conn = get_db_connection()
@@ -830,7 +856,9 @@ def playlist_detail(request, playlist_id):
         songs = []
     cursor.close()
     conn.close()
-    return render(request, 'playlistdetail.html', {'playlist': playlist, 'songs': songs, 'roles':request.session['roles']})
+    email = request.session.get('email')
+    is_premium = is_user_premium(email)
+    return render(request, 'playlistdetail.html', {'playlist': playlist, 'is_premium' : is_premium, 'songs': songs, 'roles':request.session['roles']})
 
 @csrf_exempt
 def edit_playlist(request, playlist_id):
@@ -850,7 +878,9 @@ def edit_playlist(request, playlist_id):
     playlist = cursor.fetchone()
     cursor.close()
     conn.close()
-    return render(request, 'editplaylist.html', {'playlist': playlist, 'roles':request.session['roles']})
+    email = request.session.get('email')
+    is_premium = is_user_premium(email)
+    return render(request, 'editplaylist.html', {'playlist': playlist, 'is_premium' : is_premium, 'roles':request.session['roles']})
 
 @csrf_exempt
 def delete_playlist(request, playlist_id):
@@ -900,7 +930,9 @@ def add_song_to_playlist(request, playlist_id):
     songs = [{'id_lagu': row[0], 'judul_lagu': row[1], 'nama_penyanyi': row[2]} for row in songsrow]
     cursor.close()
     conn.close()
-    return render(request, 'addsongtoplaylist.html', {'songs': songs, 'roles':request.session['roles']})
+    email = request.session.get('email')
+    is_premium = is_user_premium(email)
+    return render(request, 'addsongtoplaylist.html', {'songs': songs, 'is_premium' : is_premium, 'roles':request.session['roles']})
 
 @csrf_exempt
 def play_song(request, song_id):
@@ -911,7 +943,7 @@ def play_song(request, song_id):
 
     if request.method == 'POST':
         progress = int(request.POST.get('progress', 0))
-        if progress > 70:
+        if progress >= 70:
             timestamp = datetime.now()
             cursor.execute("INSERT INTO AKUN_PLAY_SONG (email_pemain, id_song, waktu) VALUES (%s, %s, %s)", (email, song_id, timestamp))
             conn.commit()
@@ -1072,8 +1104,9 @@ def add_song_to_playlist_with_option(request, song_id):
         songs = []
     cursor.close()
     conn.close()
-    
-    return render(request, 'addsongtoplaylist2.html', {'playlists': playlists, 'songs': songs, 'roles':request.session['roles']})
+    email = request.session.get('email')
+    is_premium = is_user_premium(email)
+    return render(request, 'addsongtoplaylist2.html', {'is_premium' : is_premium,'playlists': playlists, 'songs': songs, 'roles':request.session['roles']})
 
 @csrf_exempt
 def download_song(request, song_id):
@@ -1162,7 +1195,9 @@ def play_user_playlist(request, id_user_playlist):
         songs = []
     cursor.close()
     conn.close()
-    return render(request, 'playuserplaylist.html', {'playlist': playlist, 'songs': songs, 'roles':request.session['roles']})
+    email = request.session.get('email')
+    is_premium = is_user_premium(email)
+    return render(request, 'playuserplaylist.html', {'is_premium' : is_premium,'playlist': playlist, 'songs': songs, 'roles':request.session['roles']})
 
 def shuffle_play(request, id_user_playlist):
     conn = get_db_connection()

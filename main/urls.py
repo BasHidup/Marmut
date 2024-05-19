@@ -4,8 +4,8 @@ from main.views import show_dashboard, show_homepage, show_royalties,berlanggana
 app_name = 'main'
 
 urlpatterns = [
-    path('', show_dashboard, name='show_dashboard'),
-    path('home', show_homepage, name='show_homepage'),
+    path('', show_homepage, name='show_homepage'),
+    path('dashboard', show_dashboard, name='show_dashboard'),
     path('cek-royalti/', show_royalties, name='show_royalties'), 
     path('paket/', daftar_paket, name='daftar_paket'),
     path('paket/berlangganan/<str:jenis_paket>/', berlangganan_paket, name='berlangganan_paket'),

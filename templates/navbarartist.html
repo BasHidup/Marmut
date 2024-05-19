@@ -70,18 +70,15 @@
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="{% url 'main:show_homepage' %}">Marmut</a>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="/">Marmut</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item">
-          <a class="nav-link" href="/">Dashboard</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/chart/">Chart</a>
+          <a class="nav-link" href="{% url 'main:show_dashboard' %}">Dashboard</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="{% url 'albums:manage_playlists' %}">Kelola Playlist</a>

@@ -712,6 +712,7 @@ def downloaded_songs(request):
         messages.error(request, f'Terjadi kesalahan: {str(e)}')
     return render(request, 'downloaded_songs.html', context)
 
+@csrf_exempt
 def delete_downloaded_song(request, downloaded_song_id):
     if not has_logged_in(request):
         return redirect('authentication:show_start')

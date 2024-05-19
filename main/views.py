@@ -342,6 +342,12 @@ def berlangganan_paket(request, jenis_paket):
                 VALUES ('{id}', '{jenis_paket}', '{email}', '{timestamp_dimulai}', '{timestamp_berakhir}', '{metode_bayar}', {nominal})
                 """)
                 connection.commit()
+                
+                cursor.execute(f"""
+                INSERT INTO PREMIUM (email)
+                VALUES ('{email}')
+                """)
+                connection.commit()
         except Exception as e:
             messages.error(request, str(e).splitlines()[0])
             return redirect('main:daftar_paket')

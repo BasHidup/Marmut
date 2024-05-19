@@ -90,15 +90,11 @@
       <div class="card-body">
         <table class="table">
           <tbody>
+            {% for album_name in albums %}
             <tr>
-              <td>NCT 2020</td>
+              <td>{{ album_name }}</td>
             </tr>
-            <tr>
-              <td>Drama</td>
-            </tr>
-            <tr>
-              <td>Reve Festival</td>
-            </tr>
+            {% endfor %}
           </tbody>
         </table>
       </div>

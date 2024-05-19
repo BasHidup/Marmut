@@ -338,6 +338,11 @@ def berlangganan_paket(request, jenis_paket):
                 cursor.execute('SET search_path TO public')
                 
                 cursor.execute(f"""
+                DELETE FROM NONPREMIUM WHERE email = '{email}'
+                """)
+                connection.commit()
+                
+                cursor.execute(f"""
                 INSERT INTO TRANSACTION (id, jenis_paket, email, timestamp_dimulai, timestamp_berakhir, metode_bayar, nominal)
                 VALUES ('{id}', '{jenis_paket}', '{email}', '{timestamp_dimulai}', '{timestamp_berakhir}', '{metode_bayar}', {nominal})
                 """)

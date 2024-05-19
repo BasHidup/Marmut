@@ -8,6 +8,10 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 
+def check_subscription_status(email):
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT check_subscription_status(%s)", [email])
+
 def show_start(request):
     return render(request, 'start.html')
 
@@ -20,48 +24,42 @@ def login_view(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
 
-        # Query untuk memeriksa di tabel AKUN
-        query_akun = f"""
+        # Parameterized queries for security
+        query_akun = """
         SELECT email
         FROM AKUN
-        WHERE email = '{email}' AND password = '{password}'
+        WHERE email = %s AND password = %s
         GROUP BY email
         """
 
-        # Query untuk memeriksa di tabel ARTIST
-        query_artist = f"""
+        query_artist = """
         SELECT u.email
         FROM AKUN u
         JOIN ARTIST ar ON u.email = ar.email_akun
-        WHERE u.email = '{email}' AND u.password = '{password}'
+        WHERE u.email = %s AND u.password = %s
         GROUP BY u.email
         """
 
-        # Query untuk memeriksa di tabel SONGWRITER
-        query_songwriter = f"""
+        query_songwriter = """
         SELECT u.email
         FROM AKUN u
         JOIN SONGWRITER sw ON u.email = sw.email_akun
-        WHERE u.email = '{email}' AND u.password = '{password}'
+        WHERE u.email = %s AND u.password = %s
         GROUP BY u.email
         """
 
-        # Query untuk memeriksa di tabel PODCASTER
-        query_podcaster = f"""
+        query_podcaster = """
         SELECT u.email
         FROM AKUN u
         JOIN PODCASTER pc ON u.email = pc.email
-        WHERE u.email = '{email}' AND u.password = '{password}'
+        WHERE u.email = %s AND u.password = %s
         GROUP BY u.email
         """
 
-        # Query untuk memeriksa di tabel LABEL
-        query_label = f"""
-        SELECT
-            l.email,
-            'label' AS role
+        query_label = """
+        SELECT l.email, 'label' AS role
         FROM LABEL l
-        WHERE l.email = '{email}' AND l.password = '{password}'
+        WHERE l.email = %s AND l.password = %s
         """
 
         try:
@@ -72,34 +70,33 @@ def login_view(request):
                 email_found = None
 
                 # Cek di tabel AKUN
-                cursor.execute(query_akun)
+                cursor.execute(query_akun, [email, password])
                 akun_result = cursor.fetchone()
                 if akun_result:
                     email_found = akun_result[0]
                     roles.add('akun')
 
                     # Cek di tabel ARTIST
-                    cursor.execute(query_artist)
+                    cursor.execute(query_artist, [email, password])
                     artist_result = cursor.fetchone()
                     if artist_result:
                         roles.add('artist')
 
                     # Cek di tabel SONGWRITER
-                    cursor.execute(query_songwriter)
+                    cursor.execute(query_songwriter, [email, password])
                     songwriter_result = cursor.fetchone()
                     if songwriter_result:
                         roles.add('songwriter')
 
                     # Cek di tabel PODCASTER
-                    cursor.execute(query_podcaster)
+                    cursor.execute(query_podcaster, [email, password])
                     podcaster_result = cursor.fetchone()
-                    print("podcaster",podcaster_result)
                     if podcaster_result:
                         roles.add('podcaster')
 
                 # Jika tidak ditemukan di tabel AKUN, cek di tabel LABEL
                 if not roles:
-                    cursor.execute(query_label)
+                    cursor.execute(query_label, [email, password])
                     label_result = cursor.fetchone()
                     if label_result:
                         email_found = label_result[0]
@@ -108,7 +105,10 @@ def login_view(request):
                 if roles:
                     request.session['email'] = email_found
                     request.session['roles'] = ', '.join(roles)
-                    print(roles)
+
+                    # Check and update subscription status
+                    check_subscription_status(email_found)
+
                     return redirect('main:show_homepage')
                 else:
                     messages.error(request, 'Email atau password salah')

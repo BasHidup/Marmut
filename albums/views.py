@@ -652,7 +652,6 @@ def delete_downloaded_song(request, song_id):
         messages.success(request, f'Berhasil menghapus Lagu dengan judul "{song_title}" dari daftar unduhan!')
         return redirect('downloaded_songs')
 
-
 @csrf_exempt
 def manage_playlists(request):
     # Memeriksa apakah pengguna telah masuk atau belum

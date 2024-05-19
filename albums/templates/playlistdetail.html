@@ -1,3 +1,21 @@
+{% block content %}
+    {% if 'label' in roles %}
+        {% include "navbarlabel.html" %}
+    {% elif 'artist' in roles and 'podcaster' in roles %}
+        {% include "navbarartistpodcaster.html" %}
+    {% elif 'songwriter' in roles and 'podcaster' in roles %}
+        {% include "navbarartistpodcaster.html" %}
+    {% elif 'artist' in roles %}
+        {% include "navbarartist.html" %}
+    {% elif 'songwriter' in roles %}
+        {% include "navbarsongwriter.html" %}
+    {% elif 'podcaster' in roles %}
+        {% include "navbarpodcaster.html" %}
+    {% elif is_premium %}
+        {% include "navbarpremium.html" %}
+    {% else %}
+        {% include "navbaruser.html" %}
+    {% endif %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -37,7 +55,6 @@
     </style>
 </head>
 <body>
-  {% include "navbaruser.html" %}
     <div class="container">
         <div class="card">
             <div class="card-header">
@@ -90,3 +107,4 @@
     </div>
 </body>
 </html>
+{% endblock content %}

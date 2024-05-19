@@ -2,6 +2,8 @@ import uuid
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 import psycopg2
+from django.contrib.auth.decorators import login_required
+from albums.views import is_user_premium
 from .models import Paket, Transaksi
 from django.contrib import messages
 from django.db import connection
@@ -22,9 +24,13 @@ def show_dashboard(request):
     if not has_logged_in(request):
         return redirect('authentication:show_start')
     
-    context = {}
-    context['roles']=request.session['roles']
+    email = request.session.get('email')
+    is_premium = is_user_premium(email)
+    
+    context = {'is_premium' : is_premium}
+    context['roles'] = request.session['roles']
     roles_splitted = []
+    
     if 'roles' in request.session:
         roles = request.session['roles']
         with connection.cursor() as cursor:
@@ -38,7 +44,7 @@ def show_dashboard(request):
             if ',' in roles: 
                 roles_splitted = roles.split(",")
 
-            if (len(roles_splitted)>2):
+            if len(roles_splitted) > 2:
                 if 'artist' in roles and 'songwriter' in roles and 'podcaster' in roles:
                     role_ini = 'Artist, Songwriter, Podcaster'
                 elif 'artist' in roles and 'songwriter' in roles:
@@ -51,58 +57,88 @@ def show_dashboard(request):
                 cursor.execute(f"SELECT nama, email, kota_asal, gender, tempat_lahir, tanggal_lahir FROM AKUN WHERE email = '{request.session['email']}'")
                 row = cursor.fetchone()
                 if row:
-                    if row[3] == 0:
-                        gender = "Laki-Laki"
-                    else:
-                        gender = "Perempuan"
+                    gender = "Laki-Laki" if row[3] == 0 else "Perempuan"
                     context['name'], context['email'], context['kota_asal'], context['gender'], context['tempat_lahir'], context['tanggal_lahir'], context['role'] = row[0], row[1], row[2], gender, row[4], row[5], role_ini
+                    
+                    # Menambahkan data tambahan sesuai role
+                    if 'artist' in roles:
+                        # Ambil lagu yang dinyanyikan
+                        cursor.execute(f"SELECT K.judul FROM SONG S JOIN KONTEN K ON S.id_konten = K.id WHERE S.id_artist = (SELECT id FROM ARTIST WHERE email_akun = '{request.session['email']}')")
+                        songs = cursor.fetchall()
+                        context['songs'] = [song[0] for song in songs]
+                    
+                    if 'songwriter' in roles:
+                        # Ambil lagu yang ditulis
+                        cursor.execute(f"SELECT K.judul FROM SONGWRITER_WRITE_SONG SS JOIN SONG S ON SS.id_song = S.id_konten JOIN KONTEN K ON S.id_konten = K.id WHERE SS.id_songwriter = (SELECT id FROM SONGWRITER WHERE email_akun = '{request.session['email']}')")
+                        written_songs = cursor.fetchall()
+                        context['written_songs'] = [song[0] for song in written_songs]
+                    
+                    if 'podcaster' in roles:
+                        # Ambil podcast yang dimiliki
+                        cursor.execute(f"SELECT K.judul FROM PODCAST P JOIN KONTEN K ON P.id_konten = K.id WHERE P.email_podcaster = '{request.session['email']}'")
+                        podcasts = cursor.fetchall()
+                        context['podcasts'] = [podcast[0] for podcast in podcasts]
+
                     return render(request, 'dashboardartist.html', context)
                 
             elif 'podcaster' in roles:
                 cursor.execute(f"SELECT nama, email, kota_asal, gender, tempat_lahir, tanggal_lahir FROM AKUN WHERE email = '{request.session['email']}'")
                 row = cursor.fetchone()
                 if row:
-                    if row[3] == 0:
-                        gender = "Laki-Laki"
-                    else:
-                        gender = "Perempuan"
+                    gender = "Laki-Laki" if row[3] == 0 else "Perempuan"
                     context['name'], context['email'], context['kota_asal'], context['gender'], context['tempat_lahir'], context['tanggal_lahir'], context['role'] = row[0], row[1], row[2], gender, row[4], row[5], 'Podcaster'
+
+                    # Menambahkan data tambahan sesuai role
+                    cursor.execute(f"SELECT K.judul FROM PODCAST P JOIN KONTEN K ON P.id_konten = K.id WHERE P.email_podcaster = '{request.session['email']}'")
+                    podcasts = cursor.fetchall()
+                    context['podcasts'] = [podcast[0] for podcast in podcasts]
+
                     return render(request, 'dashboardpodcaster.html', context)
 
             elif 'artist' in roles:
                 cursor.execute(f"SELECT nama, email, kota_asal, gender, tempat_lahir, tanggal_lahir FROM AKUN WHERE email = '{request.session['email']}'")
                 row = cursor.fetchone()
                 if row:
-                    if row[3] == 0:
-                        gender = "Laki-Laki"
-                    else:
-                        gender = "Perempuan"
+                    gender = "Laki-Laki" if row[3] == 0 else "Perempuan"
                     context['name'], context['email'], context['kota_asal'], context['gender'], context['tempat_lahir'], context['tanggal_lahir'], context['role'] = row[0], row[1], row[2], gender, row[4], row[5], 'Artist'
+                    
+                    # Menambahkan data tambahan sesuai role
+                    cursor.execute(f"SELECT K.judul FROM SONG S JOIN KONTEN K ON S.id_konten = K.id WHERE S.id_artist = (SELECT id FROM ARTIST WHERE email_akun = '{request.session['email']}')")
+                    songs = cursor.fetchall()
+                    context['songs'] = [song[0] for song in songs]
+
                     return render(request, 'dashboardartist.html', context)
                 
             elif 'songwriter' in roles:
                 cursor.execute(f"SELECT nama, email, kota_asal, gender, tempat_lahir, tanggal_lahir FROM AKUN WHERE email = '{request.session['email']}'")
                 row = cursor.fetchone()
                 if row:
-                    if row[3] == 0:
-                        gender = "Laki-Laki"
-                    else:
-                        gender = "Perempuan"
+                    gender = "Laki-Laki" if row[3] == 0 else "Perempuan"
                     context['name'], context['email'], context['kota_asal'], context['gender'], context['tempat_lahir'], context['tanggal_lahir'], context['role'] = row[0], row[1], row[2], gender, row[4], row[5], 'Songwriter'
+
+                    # Menambahkan data tambahan sesuai role
+                    cursor.execute(f"SELECT K.judul FROM SONGWRITER_WRITE_SONG SS JOIN SONG S ON SS.id_song = S.id_konten JOIN KONTEN K ON S.id_konten = K.id WHERE SS.id_songwriter = (SELECT id FROM SONGWRITER WHERE email_akun = '{request.session['email']}')")
+                    written_songs = cursor.fetchall()
+                    context['written_songs'] = [song[0] for song in written_songs]
+
                     return render(request, 'dashboardartist.html', context)
                 
             elif 'akun' in roles:
                 cursor.execute(f"SELECT nama, email, kota_asal, gender, tempat_lahir, tanggal_lahir FROM AKUN WHERE email = '{request.session['email']}'")
                 row = cursor.fetchone()
                 if row:
-                    if row[3] == 0:
-                        gender = "Laki-Laki"
-                    else:
-                        gender = "Perempuan"
+                    gender = "Laki-Laki" if row[3] == 0 else "Perempuan"
                     context['name'], context['email'], context['kota_asal'], context['gender'], context['tempat_lahir'], context['tanggal_lahir'], context['role'] = row[0], row[1], row[2], gender, row[4], row[5], 'Pengguna Biasa'
+
+                    # Menambahkan data tambahan sesuai role
+                    cursor.execute(f"SELECT judul FROM USER_PLAYLIST WHERE email_pembuat = '{request.session['email']}'")
+                    playlists = cursor.fetchall()
+                    context['playlists'] = [playlist[0] for playlist in playlists]
+
                     return render(request, 'dashboarduser.html', context)
     
     return HttpResponse("Role tidak ditemukan atau tidak valid.")
+
 
 def get_db_connection():
     # Get database credentials from environment variables
@@ -454,8 +490,12 @@ def show_homepage(request):
     if not has_logged_in(request):
         return redirect('authentication:show_start')
     
+    email = request.session.get('email')
+    is_premium = is_user_premium(email)
+    
     conn = get_db_connection()
     cursor = conn.cursor()
+    
     
     query_songs = """
         SELECT K.id, K.judul, A.nama
@@ -492,7 +532,8 @@ def show_homepage(request):
         'songs': songs,
         'podcasts': podcasts,
         'playlists': playlists,
-        'roles':request.session['roles']
+        'roles':request.session['roles'],
+        'is_premium' : is_premium
     })
 
 def format_rupiah(amount):

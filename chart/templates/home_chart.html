@@ -1,17 +1,19 @@
 {% if 'label' in roles %}
-    {% include "navbarlabel.html" %}
+{% include "navbarlabel.html" %}
 {% elif 'artist' in roles and 'podcaster' in roles %}
-    {% include "navbarartistpodcaster.html" %}
+{% include "navbarartistpodcaster.html" %}
 {% elif 'songwriter' in roles and 'podcaster' in roles %}
-    {% include "navbarartistpodcaster.html" %}
+{% include "navbarartistpodcaster.html" %}
 {% elif 'artist' in roles %}
-    {% include "navbarartist.html" %}
+{% include "navbarartist.html" %}
 {% elif 'songwriter' in roles %}
-    {% include "navbarsongwriter.html" %}
+{% include "navbarsongwriter.html" %}
 {% elif 'podcaster' in roles %}
-    {% include "navbarpodcaster.html" %}
+{% include "navbarpodcaster.html" %}
+{% elif is_premium %}
+{% include "navbarpremium.html" %}
 {% else %}
-    {% include "navbaruser.html" %}
+{% include "navbaruser.html" %}
 {% endif %}
 <!DOCTYPE html>
 <html lang="en">

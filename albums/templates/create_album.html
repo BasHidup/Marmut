@@ -11,6 +11,8 @@
         {% include "navbarsongwriter.html" %}
     {% elif 'podcaster' in roles %}
         {% include "navbarpodcaster.html" %}
+    {% elif is_premium %}
+        {% include "navbarpremium.html" %}
     {% else %}
         {% include "navbaruser.html" %}
     {% endif %}

@@ -1,3 +1,4 @@
+{% block content %}
     {% if 'label' in roles %}
         {% include "navbarlabel.html" %}
     {% elif 'artist' in roles and 'podcaster' in roles %}
@@ -12,6 +13,12 @@
         {% include "navbarpodcaster.html" %}
     {% elif is_premium %}
         {% include "navbarpremium.html" %}
+    {% elif 'artist' in roles and is_premium %}
+        {% include "navbarpremiumartist.html" %}
+    {% elif 'songwriter' in roles and is_premium %}
+        {% include "navbarpremiumsongwriter.html" %}
+    {% elif 'podcaster' in roles and is_premium %}
+        {% include "navbarpremiumpodcaster.html" %}
     {% else %}
         {% include "navbaruser.html" %}
     {% endif %}
@@ -114,3 +121,4 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
+{% endblock content %}

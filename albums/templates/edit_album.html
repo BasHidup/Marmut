@@ -1,6 +1,4 @@
 {% block content %}
-
-{% block content %}
     {% if 'label' in roles %}
         {% include "navbarlabel.html" %}
     {% elif 'artist' in roles and 'podcaster' in roles %}
@@ -15,6 +13,12 @@
         {% include "navbarpodcaster.html" %}
     {% elif is_premium %}
         {% include "navbarpremium.html" %}
+    {% elif 'artist' in roles and is_premium %}
+        {% include "navbarpremiumartist.html" %}
+    {% elif 'songwriter' in roles and is_premium %}
+        {% include "navbarpremiumsongwriter.html" %}
+    {% elif 'podcaster' in roles and is_premium %}
+        {% include "navbarpremiumpodcaster.html" %}
     {% else %}
         {% include "navbaruser.html" %}
     {% endif %}

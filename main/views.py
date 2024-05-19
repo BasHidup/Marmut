@@ -44,7 +44,7 @@ def show_dashboard(request):
                     albums = cursor.fetchall()
                     context['albums'] = [album[0] for album in albums]
                     
-                    return render(request, 'dashboardlabel.html', context)
+                    return render(request, 'dashboard.html', context)
             
             if ',' in roles: 
                 roles_splitted = roles.split(",")
@@ -84,7 +84,7 @@ def show_dashboard(request):
                         podcasts = cursor.fetchall()
                         context['podcasts'] = [podcast[0] for podcast in podcasts]
 
-                    return render(request, 'dashboardartist.html', context)
+                    return render(request, 'dashboard.html', context)
                 
             elif 'podcaster' in roles:
                 cursor.execute(f"SELECT nama, email, kota_asal, gender, tempat_lahir, tanggal_lahir FROM AKUN WHERE email = '{request.session['email']}'")
@@ -98,7 +98,7 @@ def show_dashboard(request):
                     podcasts = cursor.fetchall()
                     context['podcasts'] = [podcast[0] for podcast in podcasts]
 
-                    return render(request, 'dashboardpodcaster.html', context)
+                    return render(request, 'dashboard.html', context)
 
             elif 'artist' in roles:
                 cursor.execute(f"SELECT nama, email, kota_asal, gender, tempat_lahir, tanggal_lahir FROM AKUN WHERE email = '{request.session['email']}'")
@@ -112,7 +112,7 @@ def show_dashboard(request):
                     songs = cursor.fetchall()
                     context['songs'] = [song[0] for song in songs]
 
-                    return render(request, 'dashboardartist.html', context)
+                    return render(request, 'dashboard.html', context)
                 
             elif 'songwriter' in roles:
                 cursor.execute(f"SELECT nama, email, kota_asal, gender, tempat_lahir, tanggal_lahir FROM AKUN WHERE email = '{request.session['email']}'")
@@ -126,7 +126,9 @@ def show_dashboard(request):
                     written_songs = cursor.fetchall()
                     context['written_songs'] = [song[0] for song in written_songs]
 
-                    return render(request, 'dashboardartist.html', context)
+                    return render(request, 'dashboard.html', context)
+                
+            
                 
             elif 'akun' in roles:
                 cursor.execute(f"SELECT nama, email, kota_asal, gender, tempat_lahir, tanggal_lahir FROM AKUN WHERE email = '{request.session['email']}'")
@@ -140,10 +142,7 @@ def show_dashboard(request):
                     playlists = cursor.fetchall()
                     context['playlists'] = [playlist[0] for playlist in playlists]
 
-                    return render(request, 'dashboarduser.html', context)
-    
-    return HttpResponse("Role tidak ditemukan atau tidak valid.")
-
+                    return render(request, 'dashboard.html', context)
 
 def get_db_connection():
     # Get database credentials from environment variables
@@ -172,7 +171,7 @@ def get_db_connection():
                 row = cursor.fetchone()
                 if row:
                     context['name'], context['email'], context['role'] = row[0], row[1], 'Label'
-                    return render(request, 'dashboardlabel.html', context)
+                    return render(request, 'dashboard.html', context)
                 
                 
             elif len(roles) > 2:
@@ -193,7 +192,7 @@ def get_db_connection():
                     else:
                         gender = "Perempuan"
                     context['name'], context['email'], context['kota_asal'], context['gender'], context['tempat_lahir'], context['tanggal_lahir'], context['role'] = row[0], row[1], row[2], gender, row[4], row[5], role_ini
-                    return render(request, 'dashboardartist.html', context)
+                    return render(request, 'dashboard.html', context)
                 
             elif 'podcaster' in roles:
                 cursor.execute(f"SELECT nama, email, kota_asal, gender, tempat_lahir, tanggal_lahir FROM AKUN WHERE email = '{request.session['email']}'")
@@ -204,7 +203,7 @@ def get_db_connection():
                     else:
                         gender = "Perempuan"
                     context['name'], context['email'], context['kota_asal'], context['gender'], context['tempat_lahir'], context['tanggal_lahir'], context['role'] = row[0], row[1], row[2], gender, row[4], row[5], 'Podcaster'
-                    return render(request, 'dashboardpodcaster.html', context)
+                    return render(request, 'dashboard.html', context)
 
             elif 'artist' in roles:
                 cursor.execute(f"SELECT nama, email, kota_asal, gender, tempat_lahir, tanggal_lahir FROM AKUN WHERE email = '{request.session['email']}'")
@@ -215,7 +214,7 @@ def get_db_connection():
                     else:
                         gender = "Perempuan"
                     context['name'], context['email'], context['kota_asal'], context['gender'], context['tempat_lahir'], context['tanggal_lahir'], context['role'] = row[0], row[1], row[2], gender, row[4], row[5], 'Artist'
-                    return render(request, 'dashboardartist.html', context)
+                    return render(request, 'dashboard.html', context)
                 
             elif 'songwriter' in roles:
                 cursor.execute(f"SELECT nama, email, kota_asal, gender, tempat_lahir, tanggal_lahir FROM AKUN WHERE email = '{request.session['email']}'")
@@ -226,7 +225,7 @@ def get_db_connection():
                     else:
                         gender = "Perempuan"
                     context['name'], context['email'], context['kota_asal'], context['gender'], context['tempat_lahir'], context['tanggal_lahir'], context['role'] = row[0], row[1], row[2], gender, row[4], row[5], 'Songwriter'
-                    return render(request, 'dashboardartist.html', context)
+                    return render(request, 'dashboard.html', context)
                 
             elif 'akun' in roles:
                 cursor.execute(f"SELECT nama, email, kota_asal, gender, tempat_lahir, tanggal_lahir FROM AKUN WHERE email = '{request.session['email']}'")
@@ -237,7 +236,7 @@ def get_db_connection():
                     else:
                         gender = "Perempuan"
                     context['name'], context['email'], context['kota_asal'], context['gender'], context['tempat_lahir'], context['tanggal_lahir'], context['role'] = row[0], row[1], row[2], gender, row[4], row[5], 'Pengguna Biasa'
-                    return render(request, 'dashboarduser.html', context)
+                    return render(request, 'dashboard.html', context)
     
     return HttpResponse("Role tidak ditemukan atau tidak valid.")
 
@@ -468,7 +467,7 @@ def search(request):
             messages.error(request, f'Terjadi kesalahan: {str(e)}')
 
         return render(request, 'search.html', context)
-    return render(request, 'dashboardlabel.html')
+    return render(request, 'dashboard.html')
 
 
 def riwayat_transaksi(request):

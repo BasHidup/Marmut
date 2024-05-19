@@ -54,7 +54,7 @@ def detail_chart(request, id):
         })
 
     song = sql.query_result(f'''
-    SELECT K.judul, A.NAMA, K.tanggal_rilis, S.total_play, PS.id_playlist
+    SELECT K.judul, A.NAMA, K.tanggal_rilis, S.total_play, PS.id_song
     FROM KONTEN K
     JOIN SONG S ON S.id_konten = K.id
     JOIN PLAYLIST_SONG PS ON PS.id_song = K.id

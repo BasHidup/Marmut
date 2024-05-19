@@ -118,15 +118,11 @@
           <div class="card-body">
             <table class="table">
               <tbody>
+                {% for song_title in songs %}
                 <tr>
-                  <td>Lagu 1</td>
+                  <td>{{ song_title }}</td>
                 </tr>
-                <tr>
-                  <td>Lagu 2</td>
-                </tr>
-                <tr>
-                  <td>Lagu 3</td>
-                </tr>
+                {% endfor %}
               </tbody>
             </table>
           </div>

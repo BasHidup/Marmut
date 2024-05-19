@@ -59,7 +59,7 @@
                 <td>{{ song.tipe }}</td>
                 <td>{{ song.judul }}</td>
                 <td>{{ song.oleh }}</td>
-                <td><a href="{% url 'albums:show_song_detail' song.id %}" class="btn btn-primary">Lihat</a></td>
+                <td><a href="/albums/songs/play/{{ song.id }}/" class="btn btn-primary">Lihat</a></td>
             </tr>
             {% endfor %}
             {% endif %}

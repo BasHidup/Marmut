@@ -39,6 +39,11 @@ def show_dashboard(request):
                 row = cursor.fetchone()
                 if row:
                     context['name'], context['email'], context['role'] = row[0], row[1], 'Label'
+                    
+                    cursor.execute(f"SELECT judul FROM ALBUM WHERE id_label = (SELECT id FROM LABEL WHERE email = '{request.session['email']}')")
+                    albums = cursor.fetchall()
+                    context['albums'] = [album[0] for album in albums]
+                    
                     return render(request, 'dashboardlabel.html', context)
             
             if ',' in roles: 

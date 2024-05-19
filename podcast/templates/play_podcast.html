@@ -1,27 +1,5 @@
 {% block content %}
-    {% if 'label' in roles %}
-        {% include "navbarlabel.html" %}
-    {% elif 'artist' in roles and 'podcaster' in roles %}
-        {% include "navbarartistpodcaster.html" %}
-    {% elif 'songwriter' in roles and 'podcaster' in roles %}
-        {% include "navbarartistpodcaster.html" %}
-    {% elif 'artist' in roles %}
-        {% include "navbarartist.html" %}
-    {% elif 'songwriter' in roles %}
-        {% include "navbarsongwriter.html" %}
-    {% elif 'podcaster' in roles %}
-        {% include "navbarpodcaster.html" %}
-    {% elif is_premium %}
-        {% include "navbarpremium.html" %}
-    {% elif 'artist' in roles and is_premium %}
-        {% include "navbarpremiumartist.html" %}
-    {% elif 'songwriter' in roles and is_premium %}
-        {% include "navbarpremiumsongwriter.html" %}
-    {% elif 'podcaster' in roles and is_premium %}
-        {% include "navbarpremiumpodcaster.html" %}
-    {% else %}
-        {% include "navbaruser.html" %}
-    {% endif %}
+{% include "navbar.html" %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -87,7 +65,6 @@
         <h4 class="text-center">Podcast Detail</h4>
         <div class="mb-4"></div>
 
-        <img src="marmut.png" alt="Podcast Cover" class="podcast-cover mb-3">
         {% for p in podcast %}
         <h3>{{ p.judul }}</h3>
 
@@ -99,7 +76,7 @@
         <p class="episode-info">Tahun: {{ p.tahun }}</p>
         {% endfor %}
 
-        <a href="{% url 'podcast:home_podcast' %}">
+        <a href="{% url 'main:show_homepage' %}">
         <button  class="btn btn-dark mr-2" ><i class="fas fa-arrow-left"></i> Kembali</button> <!-- Back button -->
       </a>
       </div>

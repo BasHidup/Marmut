@@ -283,6 +283,7 @@ def daftar_paket(request):
         messages.error(request, f'Terjadi kesalahan: {str(e)}')
     return render(request, 'daftar_paket.html', context)
 
+@csrf_exempt
 def berlangganan_paket(request, jenis_paket):
     if not has_logged_in(request):
         return redirect('authentication:show_start')

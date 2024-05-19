@@ -1114,13 +1114,13 @@ def delete_song_from_playlist(request, playlist_id, song_id):
     
     return redirect('albums:playlist_detail', playlist_id = playlist_id)
 
-def play_user_playlist(request, playlist_id):
+def play_user_playlist(request, id_user_playlist):
     conn = get_db_connection()
     cursor = conn.cursor()
     queryplaylist = """
-                SELECT id_playlist, judul, email_pembuat, jumlah_lagu, total_durasi, tanggal_dibuat, deskripsi, id_user_playlist FROM USER_PLAYLIST WHERE id_playlist = %s;
+                SELECT id_playlist, judul, email_pembuat, jumlah_lagu, total_durasi, tanggal_dibuat, deskripsi, id_user_playlist FROM USER_PLAYLIST WHERE id_user_playlist = %s
                 """
-    cursor.execute(queryplaylist, (playlist_id,))
+    cursor.execute(queryplaylist, (id_user_playlist,))
     playlistrow = cursor.fetchone()
     playlist = {
         'id' : playlistrow[0],
@@ -1153,9 +1153,9 @@ def play_user_playlist(request, playlist_id):
         JOIN
             AKUN ON ARTIST.email_akun = AKUN.email
         WHERE
-            USER_PLAYLIST.id_playlist = %s;
+            USER_PLAYLIST.id_user_playlist = %s;
                 """
-        cursor.execute(querysongs, (playlist_id,))
+        cursor.execute(querysongs, (id_user_playlist,))
         songsrow = cursor.fetchall()
         songs = [{'id_lagu': row[0],'judul_lagu': row[1], 'durasi_lagu': row[2], 'nama_penyanyi': row[3]} for row in songsrow]
     else:
@@ -1209,5 +1209,5 @@ def shuffle_play(request, id_user_playlist):
     cursor.close()
     conn.close()
 
-    return redirect('albums:play_user_playlist', playlist_id=playlist_id)
+    return redirect('albums:play_user_playlist', id_user_playlist=id_user_playlist)
 
